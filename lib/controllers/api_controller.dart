@@ -27,15 +27,32 @@ class ApiController extends GetxController {
 
   }
 
-  List<User> getFilteredUsers(value) {
+   getFilteredUsers(value) {
     print(userList.length);
-
+  List<User> newUser=userList;
     final query = value.toLowerCase();
-    return userList
+    newUser= userList
         .where((user) =>
     user.userName!.toLowerCase().contains(query) ||
         user.email!.toLowerCase().contains(query))
         .toList();
+    userList.value=newUser;
+    if(value==''){
+      fetchUsers({"AdminId": LocalStorage.ADMINID});
+    }
+  }
+  getFilteredGroups(value) {
+    print(groupList.length);
+    List<Group> newUser=groupList;
+    final query = value.toLowerCase();
+    newUser= groupList
+        .where((user) =>
+    user.groupName.toLowerCase().contains(query))
+        .toList();
+    groupList.value=newUser;
+    if(value==''){
+      fetchGroups({"AdminId": LocalStorage.ADMINID});
+    }
   }
   MenuAppController controller=MenuAppController();
   void toggleTheme() {

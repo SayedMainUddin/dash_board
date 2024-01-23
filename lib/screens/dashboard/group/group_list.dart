@@ -88,6 +88,18 @@ setState(() {
                   }, icon: Icon(Icons.refresh))
                 ],
               ),
+              Container(
+                width: 200,
+                height: 30,
+                child: SearchBar(
+                  hintText: "Search by name",
+                  leading: Icon(Icons.search),
+                  //onChanged: apiController.setSearchQuery,
+                  onChanged: (String? value){
+                    apiController.getFilteredGroups(value);
+                  },
+                ),
+              ),
               selectedGroups.length>0? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:Row(
