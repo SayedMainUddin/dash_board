@@ -17,7 +17,7 @@ class MainScreen extends StatelessWidget {
     Get.lazyPut(() => ApiController());
     Get.lazyPut(() => MenuAppController());
     return Scaffold(
-     // key: context.read<MenuAppController>().scaffoldKey,
+      key: menuAppController.scaffoldKey,
       drawer: SideMenu(),
       body: SafeArea(
         child: Row(

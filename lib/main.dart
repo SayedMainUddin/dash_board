@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dash_board/bindings.dart';
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/screens/login/login_screen.dart';
@@ -7,8 +9,20 @@ import 'package:dash_board/utils/socket.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 Future<void> main() async {
+  HttpOverrides.global = new MyHttpOverrides();
+  // HttpOverrides.global = MyHttpOverrides();
+  // HttpClient client = new HttpClient();
+  // client.badCertificateCallback =
+  // ((X509Certificate cert, String host, int port) => true);
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
   var logedin = preferences.getString('logedin');
@@ -54,6 +68,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: MainScreen(),
     );
   }

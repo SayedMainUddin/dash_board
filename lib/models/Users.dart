@@ -17,7 +17,7 @@ class User {
   final String? status;
   final String? time;
   final String? currentMessage;
-  final String? isOnline;
+   String? isOnline;
   final String? notificationCount;
   final String? notificationStatus;
   final String? forwardCount;
@@ -95,7 +95,6 @@ class User {
       lastMsgTime: json['lastMsgTime'],
       lastMsg: json['lastMsg'],
       lastChat: json['lastChat'],
-      isOnline: json['isOnline'],
       admin: json['admin'],
       blockedBy: json['blockedBy'],
       BlockStatus: json['BlockStatus'],

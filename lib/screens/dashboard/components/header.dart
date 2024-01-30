@@ -61,7 +61,7 @@ class _HeaderState extends State<Header> {
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
        // Expanded(child: SearchField()),
-        ProfileCard()
+        ProfileCard(menuItem: MenuItem.values[0],)
       ],
     );
   }
@@ -69,12 +69,15 @@ class _HeaderState extends State<Header> {
 
 class ProfileCard extends StatelessWidget {
    ProfileCard({
-    Key? key,
+    Key? key, required this.menuItem,
   }) : super(key: key);
   final SocketController socketController=Get.put(SocketController());
-
+   MenuAppController menuAppController=Get.put(MenuAppController());
+   final MenuItem menuItem;
   @override
   Widget build(BuildContext context) {
+    var selectedItem = menuAppController.selectedItem.value;
+    bool isSelected = selectedItem == menuItem;
     return Container(
       margin: EdgeInsets.only(left: defaultPadding),
       padding: EdgeInsets.symmetric(
@@ -89,8 +92,7 @@ class ProfileCard extends StatelessWidget {
       child: Row(
         children: [
           if(LocalStorage.ADMINIMAGE=='')
-            Image.asset(
-              "assets/images/profile_pic.png",
+            Image.asset("assets/images/profile_pic.png",
               height: 38,
             ),
          if(LocalStorage.ADMINIMAGE!='')

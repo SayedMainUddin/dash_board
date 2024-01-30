@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-enum MenuItem { dashboard, notification, profile, settings,category }
+enum MenuItem { dashboard,onlineUserList,mutedUserList,groupList, notification, profile, settings,department, }
 class MenuAppController extends GetxController {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -8,7 +8,7 @@ class MenuAppController extends GetxController {
   final Rx<MenuItem> selectedItem = MenuItem.dashboard.obs;
 
 
-  void changeSelectedItem(MenuItem item) {
+   changeSelectedItem(MenuItem item) {
     selectedItem.value = item;
     update();
   }

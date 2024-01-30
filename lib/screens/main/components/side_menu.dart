@@ -27,22 +27,25 @@ class _SideMenuState extends State<SideMenu> {
     return Drawer(
       child: ListView(
         children: [
-
           DrawerHeader(
-            padding: EdgeInsets.all(30),
-            child:Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                   // borderRadius: BorderRadius.circular(100),
-                    image: DecorationImage(image: AssetImage("assets/images/loto_trans.png",),fit: BoxFit.fill)
-                  ),
-                ),
+            decoration: BoxDecoration(
+              //borderRadius: BorderRadius.circular(50),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.cyan
+              ),
 
+              image: DecorationImage(image:AssetImage("assets/images/loto_trans.png"))
+            ),
+            child: SizedBox(
+              height: 20,
+            ),
+            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.all(40),
 
-              ],
-            )
+            //child: Image.asset("assets/images/logo.png"),
           ),
+   
           DrawerListTile(
             title: "User List",
             svgSrc: "assets/icons/menu_dashboard.svg",
@@ -51,7 +54,7 @@ class _SideMenuState extends State<SideMenu> {
           DrawerListTile(
             title: "Group List",
             svgSrc: "assets/icons/menu_dashboard.svg",
-            menuItem: MenuItem.notification,
+            menuItem: MenuItem.groupList,
 
           ),
           DrawerListTile(
@@ -60,23 +63,20 @@ class _SideMenuState extends State<SideMenu> {
             menuItem: MenuItem.profile,
           ),
           DrawerListTile(
-            title: "Category",
+            title: "Department",
             svgSrc: "assets/icons/menu_profile.svg",
-            menuItem: MenuItem.category,
+            menuItem: MenuItem.department,
+            icon: Icon(Icons.category,color: Colors.white,),
+          ),
+          DrawerListTile(
+            title: "Notice",
+            svgSrc: "assets/icons/Documents.svg",
+            menuItem: MenuItem.notification,
             icon: Icon(Icons.category,color: Colors.white,),
           ),
 
 
-          const Divider(),
-       /*   IconButton(
-              onPressed: (){
-                print("mode change");
-                setState(() {
-                  Get.changeTheme(Get.isDarkMode? ThemeData.light(): ThemeData.dark());
 
-                });
-
-              }, icon: Icon(Icons.mode_night_outlined)),*/
 
 
         ],

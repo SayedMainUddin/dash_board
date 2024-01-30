@@ -4,6 +4,7 @@ import 'package:dash_board/responsive.dart';
 import 'package:dash_board/screens/dashboard/components/file_info_card.dart';
 import 'package:dash_board/screens/dashboard/department/department_screen.dart';
 import 'package:dash_board/screens/dashboard/group/group_list.dart';
+import 'package:dash_board/screens/dashboard/notice/notice_screen.dart';
 import 'package:dash_board/screens/dashboard/user/user_list.dart';
 import 'package:dash_board/screens/profile/profile_screen.dart';
 import 'package:dash_board/screens/test/test.dart';
@@ -52,7 +53,7 @@ final _width=MediaQuery.of(context).size.width;
                     Container(
                       height: _height*0.35,
                       width: _width*0.17,
-                      child:FileInfoCard(info: apiController.userList.length,title: "Online Users"),
+                      child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online Users"),
 
                     ),
                     Container(
@@ -91,7 +92,7 @@ final _width=MediaQuery.of(context).size.width;
                         Container(
                           height: _height*0.30,
                           width: _width*0.40,
-                          child:FileInfoCard(info: apiController.userList.length,title: "Online Users"),
+                          child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online Users"),
 
                         ),
                         Container(
@@ -146,7 +147,7 @@ final _width=MediaQuery.of(context).size.width;
 
                       ],
                     );
-                  case MenuItem.notification:
+                  case MenuItem.groupList:
                   // Replace with NotificationListPage()
                     return  GroupListPage();
                   case MenuItem.profile:
@@ -156,8 +157,10 @@ final _width=MediaQuery.of(context).size.width;
                   case MenuItem.settings:
                   // Replace with SettingsListPage()
                   // return SettingsListPage();
-                  case MenuItem.category:
+                  case MenuItem.department:
                     return DepartmentPage();
+                  case MenuItem.notification:
+                    return NoticePage();
                   default:return Container();
                 // default:
                 //   return Column(

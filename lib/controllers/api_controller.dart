@@ -6,6 +6,7 @@ import 'package:dash_board/models/Users.dart';
 import 'package:dash_board/models/departments.dart';
 import 'package:dash_board/screens/dashboard/department/department_screen.dart';
 import 'package:dash_board/utils/local_storage.dart';
+import 'package:dash_board/utils/socket.dart';
 import 'package:dash_board/utils/urls.dart';
 import 'package:dash_board/widgets/popup.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +17,17 @@ import 'package:intl/intl.dart';
 
 class ApiController extends GetxController {
   final userList=<User>[].obs;
+  final departmentList=<Department>[].obs;
   final mutedUserList=<User>[].obs;
   final groupList=<Group>[].obs;
   final mode="Light".obs;
-  var searchQuery = ''.obs;
-
-  void setSearchQuery(String query) {
-    searchQuery.value = query;
-    print(query);
-
-  }
+  var onlineUserList = [].obs;
+  var onlineusername = "name";
+  var onlineNameList = [].obs;
+  var onlineImageList = [].obs;
+  var temporaryOnlineUserList = <dynamic>[].obs;
+  SocketController socketController=Get.put(SocketController());
+  final MenuAppController menuAppController=Get.put(MenuAppController());
 
    getFilteredUsers(value) {
     print(userList.length);
@@ -54,17 +56,40 @@ class ApiController extends GetxController {
       fetchGroups({"AdminId": LocalStorage.ADMINID});
     }
   }
+  onlineUserIdentify() {
+    //  onlineArrayList = [];
+
+    // onlineArrayList = localStorage.usrOnlineList;
+    for (var i = 0; i < temporaryOnlineUserList.length; i++) {
+
+      var usrFrmCnn = temporaryOnlineUserList[i]['OwnId'];
+      for (var index = 0; index < userList.length; ++index) {
+        if (userList[index].uniqueId == usrFrmCnn) {
+          userList[index].isOnline = "true";
+        } else {
+          if (userList[index].isOnline == "true") {
+            for (var j = 0; j < temporaryOnlineUserList.length; j++) {
+              var usrFrmCnn = temporaryOnlineUserList[j]['OwnId'];
+              if (usrFrmCnn == userList[index].uniqueId) {
+
+                userList[index].isOnline = "true";
+                onlineUserList.add(usrFrmCnn);
+              }
+            }
+          }
+          else {
+            userList[index].isOnline = "false";
+          }
+        }
+      }
+    }
+update();
+  }
   MenuAppController controller=MenuAppController();
   void toggleTheme() {
     Get.changeTheme(Get.isDarkMode? ThemeData.light(): ThemeData.dark());
   }
-  void someAsyncFunction(BuildContext context) async {
 
-    await fetchUsers({"AdminId": LocalStorage.ADMINID});
-
-
-
-  }
   ///create department
   Future<Map<String, dynamic>> createDepartment(String departmentName) async {
     final url = Uri.parse('${WebApi.basesUrl}/api/departments');
@@ -90,6 +115,7 @@ class ApiController extends GetxController {
       print('Exception creating department: $e');
       return {'error': 'Exception occurred'};
     }
+    update();
   }
   ///get all departments
   Future<List<Department>> getAllDepartments() async {
@@ -99,12 +125,15 @@ class ApiController extends GetxController {
       // If the server returns a 200 OK response, parse the JSON
       final List<dynamic> data = json.decode(response.body);
       List<Department> departments = data.map((json) => Department.fromJson(json)).toList();
+      departmentList.value=departments;
+
       return departments;
     } else {
       // If the server did not return a 200 OK response,
       // throw an exception.
       throw Exception('Failed to load departments');
     }
+
   }
   ///delete department
   Future<void> deleteDepartment(String id) async {
@@ -116,6 +145,40 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to delete department');
     }
+    update();
+  }
+  ///make departmentHead
+  makeDepartmentHead(Map<String, dynamic> data) async {
+    try {
+    final response = await http.post(Uri.parse('${WebApi.basesUrl}/makeDepartmentHead'),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
+      },
+      body: jsonEncode(data),
+    );
+
+
+    if (response.statusCode == 200) {
+      print('user created: ${response.body}');
+      menuAppController.changeSelectedItem(MenuItem.department);
+      toggleSuccess(Get.context!, "You make this user as department head");
+      //Get.back();
+
+    } else {
+      throw Exception('Failed to load data');
+    }
+
+
+    } catch (e) {
+      print('Error: $e');
+      // Handle errors here
+    }finally{
+      await getAllDepartments();
+
+    }
+    update();
   }
 ///user
   Future<void> createNewUser(BuildContext context,Map<String, dynamic> data) async {
@@ -131,11 +194,11 @@ class ApiController extends GetxController {
 
     if (response.statusCode == 200) {
       print('user created: ${response.body}');
-     // Get.toNamed("/dashboard",);
-      someAsyncFunction(context);
+      await fetchUsers({"AdminId":LocalStorage.ADMINID});
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
   Future<void> updateUser(Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/updateUserByAdmin'),
@@ -154,6 +217,7 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
   Future<void> deleteUser(BuildContext context,Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/DeleteAccountPermanentByAdmin'),
@@ -177,8 +241,9 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
-  Future<void> fetchUsers(Map<String, dynamic> data) async {
+   fetchUsers(Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/allUserforControllbyadmin'),
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -197,9 +262,17 @@ class ApiController extends GetxController {
       //     userId: userDataList[i]['_id']
       //   );
       // }
+      var userOnline;
       List<User> currentUserList = userDataList
           .where((userData) => userData['AccountStatus'] != 'None')
           .map((userData) {
+        if(onlineUserList.contains(userData['_id'])){
+          userOnline="true";
+
+        }else{
+          userOnline="false";
+
+        }
         return User(
           userId: userData['_id'],
           userImageUrl: userData['ProfilePic'] == null || userData['ProfilePic'] == "" ? "assets/images/profile_pic.png" : userData['ProfilePic'],
@@ -209,6 +282,7 @@ class ApiController extends GetxController {
           password: userData['Password'] ?? "",
           address: userData['Address'] ?? "",
           status: userData['AccountStatus'] ?? "Active",
+          isOnline: userOnline
           // Add other properties as needed
         );
       }).toList();
@@ -229,10 +303,12 @@ class ApiController extends GetxController {
       }).toList();
       mutedUserList.value=mutedUsers;
       userList.value = currentUserList;
+     // print(userList[0].isOnline);
 
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
   Future<void> muteUser(BuildContext context,Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/MuteUnMuteAccountPermanentByAdmin'),
@@ -250,6 +326,7 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
 
 
@@ -288,6 +365,7 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
   Future<void> createNewGroup(BuildContext context,Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/createGroupByAdmin'),
@@ -306,6 +384,7 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
   Future<void> updateGroup(BuildContext context,Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/updateGroupByAdmin'),
@@ -324,6 +403,7 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
 
   Future<void> deleteGroup(BuildContext context,Map<String, dynamic> data) async {
@@ -346,6 +426,21 @@ class ApiController extends GetxController {
     } else {
       throw Exception('Failed to load data');
     }
+    update();
   }
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    socketController.socket.emit('usrSocketIdForOnline',
+        {"OwnId": LocalStorage.ADMINID, "SocketId": socketController.socket.id}
+    );
+    socketController.socket.off('onlineUsersArray');
+    socketController.socket.on('onlineUsersArray', (data) {
+      temporaryOnlineUserList.value=data;
+      print(data);
+      onlineUserIdentify();
+    });
 
+  }
 }
