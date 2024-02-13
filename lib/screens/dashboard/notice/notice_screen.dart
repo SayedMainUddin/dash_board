@@ -20,69 +20,141 @@ class NoticePage extends StatelessWidget {
       child:GetBuilder<NoticeController>(builder: (controller){
         // final filteredUsers = apiController.getFilteredUsers();
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text("NoticeList"),
-                    IconButton(onPressed: (){
-                      controller.fetchNotices();
-                    }, icon: Icon(Icons.refresh)
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Open the create notice modal
-                    _showCreateNoticeDialog(context);
-                  },
-                  child: Text('Create Notice'),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 500,
-            child: Obx((){
-              return  ListView.builder(
-                itemCount: controller.notices.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final notice = controller.notices[index];
-                  return ListTile(
-                    title: Text(notice.noticeTitle!),
-                    subtitle: Text(notice.noticeDescription!),
-                    leading:  Text(notice.noticeDeadLine.toString()),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        print(notice.noticeId);
-                        print(notice.noticeDescription);
-                        // Remove the notice from the list
-                       // controller.removeNotice(notice);
-                        showDeleteConfirmationDialog(context,notice.noticeId!);
-                      },
-                    ),
-                    onTap: (){
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return   NoticeDetailScreen(notice: notice);
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text("NoticeList"),
+                          IconButton(onPressed: (){
+                            controller.fetchNotices();
+                          }, icon: Icon(Icons.refresh)
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("SL",style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          SizedBox(width: 20,),
+                          Text("Title",style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          SizedBox(width: 200,),
+                          Text("Description",style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),),
+
+                        ],
+                      ),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Open the create notice modal
+                      _showCreateNoticeDialog(context);
+                    },
+                    child: Text('Create Notice'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 500,
+                child:Obx(() {
+                  var i=1;
+                  return ListView.separated(
+                    itemCount: controller.notices.length,
+                    shrinkWrap: true,
+                    separatorBuilder: (BuildContext context, int index) => Divider(), // Add Divider between ListTiles
+                    itemBuilder: (context, index) {
+                      final notice = controller.notices[index];
+                      return ListTile(
+                        title: Container(
+                          width: MediaQuery.of(context).size.width * 0.10,
+                          padding: const EdgeInsets.only(left: 100),
+                          child: Text(
+                            '${notice.noticeDescription}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        subtitle: Container(
+                          width: MediaQuery.of(context).size.width * 0.10,
+                          padding: const EdgeInsets.only(left: 100),
+                          child: Text(
+                            ' ${notice.noticeDeadLine.toString()}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        leading: Container(
+                          width: MediaQuery.of(context).size.width * 0.20,
+                          padding: const EdgeInsets.only(left: 10),
+                          child: RichText(text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '${i++}    ',
+                                style: TextStyle(
+                                  color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
+                                  fontSize: 18,
+                                ),
+                              ),
+
+                              TextSpan(
+                                text: '${notice.noticeTitle!}',
+                                style: TextStyle(
+                                  color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ]
+                          )),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete,color: Colors.red,),
+                          onPressed: () {
+                            print(notice.noticeId);
+                            print(notice.noticeDescription);
+                            // Remove the notice from the list
+                            // controller.removeNotice(notice);
+                            showDeleteConfirmationDialog(context, notice.noticeId!);
+                          },
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return NoticeDetailScreen(notice: notice);
+                            },
+                          );
                         },
                       );
-
                     },
                   );
-                },
-              );
-            }),
-          )
-          ],
+                })
+
+                ,
+              )
+            ],
+          ),
         );}),
     );
   }
@@ -103,10 +175,22 @@ class NoticePage extends StatelessWidget {
                 controller: titleController,
                 decoration: InputDecoration(labelText: 'Title'),
               ),
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+              Container(
+                width: 400,
+                height: 200,
+                child: SingleChildScrollView(
+                  child: TextField(
+                    controller: descriptionController,
+                    maxLines: null, // Allow unlimited lines of text
+                    decoration: InputDecoration(
+                      labelText: 'Description',
+                    ),
+                    keyboardType: TextInputType.multiline, // Allow multiline input
+                    textInputAction: TextInputAction.newline, // Add a newline action button
+                  ),
+                ),
               ),
+
               SizedBox(height: 10),
               Text('Select Notice Deadline:'),
               ElevatedButton(
@@ -126,6 +210,7 @@ class NoticePage extends StatelessWidget {
                 },
                 child: Text('Pick Deadline'),
               ),
+              Text('Selected Notice Deadline:$selectedDate'),
             ],
           ),
           actions: [

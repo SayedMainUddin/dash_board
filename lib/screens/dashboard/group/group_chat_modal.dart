@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:dash_board/screens/dashboard/group/group_controllers/group_controller.dart';
+import 'package:dash_board/screens/dashboard/group/group_widgets/create_poll.dart';
 import 'package:dash_board/screens/dashboard/user/user_controller/user_chat_controller.dart';
 import 'package:dash_board/utils/urls.dart';
 import 'package:dash_board/widgets/message_bubble.dart';
@@ -48,6 +50,7 @@ class _ChatModalState extends State<GroupChatModal> {
   SocketController socketController=Get.put(SocketController());
   final TextEditingController messageController = TextEditingController();
   final UserChatController userChatController=Get.put(UserChatController());
+  GroupController groupController=Get.put(GroupController());
   Future<void> sendMsgtoServer(String selectedId,String message,String receiverType,String receiverName) async {
     String datetime = DateFormat('dd/MM/yyyy hh:mm a').format(d);
     message = messageController.text;
@@ -65,7 +68,7 @@ class _ChatModalState extends State<GroupChatModal> {
         "Message": message,
         "MsgType": "text",
         "FileName": "",
-        "UserType": "user",
+        "UserType": "group",
         "ReceiverName":receiverName,
         "SenderName":LocalStorage.ADMINNAME
       };
@@ -358,6 +361,10 @@ class _ChatModalState extends State<GroupChatModal> {
     super.initState();
     userChatController.selectedId.value=widget.selectedId!;
     userChatController.selectedType.value="group";
+    groupController.selectedType.value="Group";
+    groupController.selectedName.value=widget.receiverName!;
+    groupController.selectedId.value=widget.selectedId!;
+
     userChatController.ChatScreenPageReady(widget.selectedId!,"group");
   }
   @override
@@ -453,6 +460,10 @@ class _ChatModalState extends State<GroupChatModal> {
                 ),
             Row(
               children: [
+                IconButton(onPressed: (){
+                  Get.dialog(CreatePollDialog(receiverType: widget.receiverType,selectedId: widget.selectedId,receiverName: widget.receiverName,));
+
+                }, icon: Icon(Icons.playlist_add_circle_rounded)),
                 IconButton(
                   icon: Icon(Icons.attach_file,color: Colors.teal,),
                   onPressed: () {

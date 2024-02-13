@@ -70,10 +70,16 @@ class _SideMenuState extends State<SideMenu> {
           ),
           DrawerListTile(
             title: "Notice",
-            svgSrc: "assets/icons/Documents.svg",
-            menuItem: MenuItem.notification,
+            svgSrc: "assets/icons/menu_task.svg",
+            menuItem: MenuItem.notice,
             icon: Icon(Icons.category,color: Colors.white,),
           ),
+          // DrawerListTile(
+          //   title: "Notification",
+          //   svgSrc: "assets/icons/menu_notification.svg",
+          //   menuItem: MenuItem.notification,
+          //   icon: Icon(Icons.category,color: Colors.white,),
+          // ),
 
 
 

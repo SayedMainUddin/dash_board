@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-enum MenuItem { dashboard,onlineUserList,mutedUserList,groupList, notification, profile, settings,department, }
+enum MenuItem { dashboard,onlineUserList,mutedUserList,groupList, notice,notification, profile, settings,department, }
 class MenuAppController extends GetxController {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 

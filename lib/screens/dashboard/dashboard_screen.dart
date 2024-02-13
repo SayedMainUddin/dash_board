@@ -6,6 +6,7 @@ import 'package:dash_board/screens/dashboard/department/department_screen.dart';
 import 'package:dash_board/screens/dashboard/group/group_list.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_screen.dart';
 import 'package:dash_board/screens/dashboard/user/user_list.dart';
+import 'package:dash_board/screens/notification/notification_screen.dart';
 import 'package:dash_board/screens/profile/profile_screen.dart';
 import 'package:dash_board/screens/test/test.dart';
 import 'package:flutter/material.dart';
@@ -34,35 +35,37 @@ final _width=MediaQuery.of(context).size.width;
 
               Header(),
               if (!Responsive.isMobile(context))
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: _height*0.35,
-                      width: _width*0.17,
-                      child:FileInfoCard(info: apiController.userList.length,title: "Total User:"),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: _height*0.35,
+                        width: _width*0.17,
+                        child:FileInfoCard(info: apiController.userList.length,title: "Total User:"),
 
-                    ),
-                    Container(
-                      height: _height*0.35,
-                      width: _width*0.17,
-                      child:FileInfoCard(info: apiController.groupList.length,title: "Total Group:"),
+                      ),
+                      Container(
+                        height: _height*0.35,
+                        width: _width*0.17,
+                        child:FileInfoCard(info: apiController.groupList.length,title: "Total Group:"),
 
-                    ),
-                    Container(
-                      height: _height*0.35,
-                      width: _width*0.17,
-                      child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online Users"),
+                      ),
+                      Container(
+                        height: _height*0.35,
+                        width: _width*0.17,
+                        child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online Users"),
 
-                    ),
-                    Container(
-                      height: _height*0.35,
-                      width: _width*0.17,
-                      child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted Users"),
+                      ),
+                      Container(
+                        height: _height*0.35,
+                        width: _width*0.17,
+                        child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted Users"),
 
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
               if (Responsive.isMobile(context))
@@ -159,8 +162,10 @@ final _width=MediaQuery.of(context).size.width;
                   // return SettingsListPage();
                   case MenuItem.department:
                     return DepartmentPage();
-                  case MenuItem.notification:
+                  case MenuItem.notice:
                     return NoticePage();
+                  case MenuItem.notification:
+                    return NotificationListScreen();
                   default:return Container();
                 // default:
                 //   return Column(

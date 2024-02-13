@@ -16,17 +16,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-class NoticeController extends GetxController {
+class NotificationController extends GetxController {
   var notices = <Notice>[].obs;
 
-  Future<void> addNotice(Notice notice) async {
-   // notices.add(notice);
- Map data={
-   "NoticeTitle": notice.noticeTitle,
-   "NoticeDescription": notice.noticeDescription,
-   "CreatorId": LocalStorage.ADMINID,
-   "NoticeDeadLine": notice.noticeDeadLine.toString()
- };
+  Future<void> addNotification(Notice notice) async {
+    // notices.add(notice);
+    Map data={
+      "NotificationTitle": notice.noticeTitle,
+      "NotificationDescription": notice.noticeDescription,
+      "SenderId": LocalStorage.ADMINID,
+      "NotificationDeadLine": notice.noticeDeadLine.toString()
+    };
     try {
       final response = await http.post(Uri.parse('${WebApi.basesUrl}/createNotice'),
         headers: {
@@ -52,14 +52,16 @@ class NoticeController extends GetxController {
       print('Error: $e');
       // Handle errors here
     }finally{
-      await fetchNotices();
+      // await getAllDepartments();
 
     }
- update();
+    update();
   }
 
-
-  fetchNotices() async {
+  void removeNotice(Notice notice) {
+    notices.remove(notice);
+  }
+  fetchNotification() async {
 
     try {
       final response = await http.post(Uri.parse('${WebApi.basesUrl}/getAllNotices'),
@@ -79,10 +81,9 @@ class NoticeController extends GetxController {
           List<Notice>    allNotices = data.map((json) => Notice.fromJson(json)).toList();
           notices.value=allNotices;
         }
-       // List<Notice> allNotices = data.map((json) => Notice.fromJson(json)).toList();
-       // notices.value=allNotices;
+        // List<Notice> allNotices = data.map((json) => Notice.fromJson(json)).toList();
+        // notices.value=allNotices;
 
-        //await fetchNotices();
 
       } else {
         throw Exception('Failed to load data');
@@ -99,7 +100,7 @@ class NoticeController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    fetchNotices();
+    fetchNotification();
   }
 
   Future<void> deleteNotice(String noticeId) async {
@@ -109,12 +110,12 @@ class NoticeController extends GetxController {
 
     if (response.statusCode == 200) {
       print('Notice deleted successfully');
-     // getAllDepartments();
+      // getAllDepartments();
       showAlerDialog("Success!", "Notice has been deleted!");
     } else {
       throw Exception('Failed to delete Notice');
     }
-    await fetchNotices();
+    await fetchNotification();
     update();
   }
 

@@ -33,55 +33,60 @@ class _UserListPopupState extends State<UserListPopup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Make Department Head'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: searchController,
-            decoration: InputDecoration(labelText: 'Search by name'),
-            onChanged: (String value) {
-              // Filter the user list based on the search input
-              setState(() {
-                filteredUsers = widget.userList.where((user) {
-                  return user.userName?.toLowerCase().contains(value.toLowerCase()) ?? false;
-                }).toList();
-              });
-            },
-          ),
-          SizedBox(height: 16),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: searchController,
+              decoration: InputDecoration(labelText: 'Search by name'),
+              onChanged: (String value) {
+                // Filter the user list based on the search input
+                setState(() {
+                  filteredUsers = widget.userList.where((user) {
+                    return user.userName?.toLowerCase().contains(value.toLowerCase()) ?? false;
+                  }).toList();
+                });
+              },
+            ),
+            SizedBox(height: 16),
 
-          Text('Select a user:'),
-          Container(
-              width: 400,
-              height: 300,
-              child:  Obx(() => ListView.builder(
-                itemCount: filteredUsers.length,
-                itemBuilder: (context, index) {
-                  User user = filteredUsers[index];
-                  return ListTile(
-                    title: Text(user.userName ?? ''),
-                    onTap: () {
-                      print(user.userId);
-                      print(user.userName);
-                      print(widget.departmentId);
-                      setState(() {
+            Text('Select a user:'),
+            SingleChildScrollView(
+              child:  Container(
+                  width: 400,
+                  height: 300,
+                  child:  Obx(() => ListView.builder(
+                    itemCount: filteredUsers.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      User user = filteredUsers[index];
+                      return ListTile(
+                        title: Text(user.userName ?? ''),
+                        onTap: () {
+                          print(user.userId);
+                          print(user.userName);
+                          print(widget.departmentId);
+                          setState(() {
 
-                      });
-                    },
-                    trailing:     ElevatedButton(onPressed: () async {
-                      showDepartmentModal(context, () async{
-                        await  apiController.makeDepartmentHead({"UserId":user.userId,"DepartmentId":widget.departmentId,"UserName":user.userName});
-                        Navigator.of(context).pop(apiController.getAllDepartments());
-                      },
+                          });
+                        },
+                        trailing:     ElevatedButton(onPressed: () async {
+                          showDepartmentModal(context, () async{
+                            await  apiController.makeDepartmentHead({"UserId":user.userId,"DepartmentId":widget.departmentId,"UserName":user.userName});
+                            Navigator.of(context).pop(apiController.getAllDepartments());
+                          },
 
+                          );
+
+                        }, child: Text('Make Department Head')),
                       );
-
-                    }, child: Text('Make Department Head')),
-                  );
-                },
-              ))
-          )
-        ],
+                    },
+                  ))
+              ),
+            )
+          ],
+        ),
       ),
       actions: [
         TextButton(

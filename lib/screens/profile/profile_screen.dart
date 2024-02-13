@@ -272,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                        Row(
+                      /*  Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             if (!Responsive.isMobile(context))
@@ -296,7 +296,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                           ],
-                        ),
+                        ),*/
 
                         // Add text fields for other fields as needed
                         SizedBox(height: 16.0),

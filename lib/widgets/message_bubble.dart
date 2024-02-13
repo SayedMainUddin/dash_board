@@ -4,6 +4,7 @@ import 'dart:html' as html;
 
 import 'dart:typed_data';
 import 'package:dash_board/models/message.dart';
+import 'package:dash_board/screens/dashboard/group/group_controllers/group_controller.dart';
 import 'package:dash_board/screens/dashboard/user/user_controller/user_chat_controller.dart';
 import 'package:dash_board/utils/local_storage.dart';
 import 'package:dash_board/utils/urls.dart';
@@ -23,6 +24,8 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../screens/dashboard/group/group_widgets/poll.dart';
+
 class MessageWidget extends StatefulWidget {
   final int i;
   final ScrollController scrollController;
@@ -38,6 +41,7 @@ class MessageWidget extends StatefulWidget {
 class _MessageWidget extends State<MessageWidget> {
   UserChatController userChatController = Get.put(
       UserChatController());
+  GroupController groupController=Get.put(GroupController());
 
   String? previousDate;
 
@@ -63,6 +67,7 @@ class _MessageWidget extends State<MessageWidget> {
             margin: const EdgeInsets.symmetric(vertical: 2.0),
             padding: EdgeInsets.only(left: 10, right: 10),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 userChatController.messages[widget.i].isVisible == true ?
                 Row(
@@ -83,51 +88,51 @@ class _MessageWidget extends State<MessageWidget> {
                         CrossAxisAlignment.end
                             : CrossAxisAlignment.start,
                         children: [
-                          userChatController.messages[widget.i]
-                              .dateHeading == true ?
-                          // buildMessage(widget.i),
-
-
-                          Container(
-                            margin: userChatController.messages[widget.i]
-                                .senderId == LocalStorage.ADMINID ?
-                            EdgeInsets.fromLTRB(0, 0, 50, 0) : EdgeInsets
-                                .fromLTRB(50, 0, 0, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 20,
-                                ),
-                                Container(
-                                  child: Text(
-                                    userChatController.messages[widget.i]
-                                        .dateMsg!, style: TextStyle(
-                                      color: Get.isDarkMode
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontSize: 12
-                                  ),),
-                                ),
-                                Container(
-
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width * 0.7,
-                                  height: 1.50, color: Colors.black45
-                                    .withOpacity(0.10),
-                                  // child: Text( userChatController.messages[widget.i].dateMsg!),
-                                ),
-                                Container(
-                                  height: 20,
-                                )
-
-                              ],
-                            ),
-                          )
-
-                              : Container(),
+                          // userChatController.messages[widget.i]
+                          //     .dateHeading == true ?
+                          // // buildMessage(widget.i),
+                          //
+                          //
+                          // Container(
+                          //   margin: userChatController.messages[widget.i]
+                          //       .senderId == LocalStorage.ADMINID ?
+                          //   EdgeInsets.fromLTRB(0, 0, 50, 0) : EdgeInsets
+                          //       .fromLTRB(50, 0, 0, 0),
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.center,
+                          //     children: [
+                          //       Container(
+                          //         height: 20,
+                          //       ),
+                          //       Container(
+                          //         child: Text(
+                          //           userChatController.messages[widget.i]
+                          //               .dateMsg!, style: TextStyle(
+                          //             color: Get.isDarkMode
+                          //                 ? Colors.white
+                          //                 : Colors.black,
+                          //             fontSize: 12
+                          //         ),),
+                          //       ),
+                          //       Container(
+                          //
+                          //         width: MediaQuery
+                          //             .of(context)
+                          //             .size
+                          //             .width * 0.7,
+                          //         height: 1.50, color: Colors.black45
+                          //           .withOpacity(0.10),
+                          //         // child: Text( userChatController.messages[widget.i].dateMsg!),
+                          //       ),
+                          //       Container(
+                          //         height: 20,
+                          //       )
+                          //
+                          //     ],
+                          //   ),
+                          // )
+                          //
+                          //     : Container(),
 
                           Row(
                             children: [
@@ -296,6 +301,9 @@ class _MessageWidget extends State<MessageWidget> {
                                   ),
                                 )
                                     : userChatController.messages[widget.i]
+                                    .msgType == "Poll"
+                                    ? showPollAsMessage(userChatController.messages[widget.i].messageText,userChatController.messages[widget.i].id!)
+                                    : userChatController.messages[widget.i]
                                     .msgType ==
                                     "Image" ?
                                 InkWell(
@@ -416,6 +424,98 @@ class _MessageWidget extends State<MessageWidget> {
             ))
 
 
+    );
+  }
+
+  // Function to extract votes from the votes line
+  Map<String, dynamic> extractVotes(String votesLine) {
+    return jsonDecode(votesLine);
+  }
+
+// Function to extract voter IDs from the votersId line
+  List<String> extractVoterIds(String votersIdLine) {
+    return jsonDecode(votersIdLine);
+  }
+
+  Widget showPollAsMessage(String? messageText, String messageId) {
+
+    if (messageText == null) return Container();
+
+    // Split the message into lines
+    List<String> lines = messageText.split('\n');
+
+    // Extract the question from the first line
+    String question = lines[0].substring('Question: '.length);
+
+    // Extract the options from the second line
+    List<String> options = lines[1].substring('Options: '.length).split(', ');
+
+    // Initialize votes and voters' IDs maps
+    Map<String, dynamic> votes = {};
+    List<String> votersId = [];
+
+    // Extract the votes and voters' IDs if available
+    if (lines.length > 2) {
+      String votesLine = lines[2].substring('Votes: '.length);
+      votes = extractVotes(votesLine);
+    }
+
+    // Extract the voter IDs if available
+    if (lines.length > 3) {
+      String votersIdLine = lines[3].substring('VotersId: '.length);
+      votersId = extractVoterIds(votersIdLine);
+    }
+
+    // Create a Poll object
+    Poll poll = Poll(
+      question: question,
+      options: options,
+      votes: votes,
+      votersId: votersId,
+    );
+
+    void handleVote(String selectedOption) {
+      // Handle the vote, for example, by sending it to the server
+      print('Voted for option: $selectedOption');
+      // Call the function to update the poll message
+      groupController.updatePollMessage(
+        messageText,
+        selectedOption,
+        LocalStorage.ADMINID,
+        messageId,
+      );
+    }
+
+    // Determine the voted option (if any)
+    String? votedOption;
+    if (votes.isNotEmpty) {
+      votedOption = votes.entries.firstWhere((entry) => entry.value['voterIds'].contains(LocalStorage.ADMINID),
+          orElse: () => MapEntry('', {'voterIds': [], 'count': 0})).key;
+    }
+
+    return Container(
+      alignment: Alignment.center,
+      width: MediaQuery.of(context).size.width * 0.30,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.30,
+      ),
+      decoration: BoxDecoration(
+        color: Color(0xffffffff),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 3,
+            offset: Offset(0, -1),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.only(top: 7.0, left: 15, bottom: 7, right: 10),
+      child: PollOptionsContainer(
+        poll: poll,
+        votedOption: votedOption,
+        onVote: handleVote,
+      ),
     );
   }
   var typeFile;

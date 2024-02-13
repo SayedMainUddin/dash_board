@@ -1,12 +1,15 @@
 
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/departments.dart';
+import 'package:dash_board/utils/encrypt.dart';
 import 'package:dash_board/widgets/popup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
 class CreateUserModal extends StatefulWidget {
   @override
   _CreateUserModalState createState() => _CreateUserModalState();
@@ -262,6 +265,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
+                  encrypt("sayedmainuddin");
                   final DateFormat formatter = DateFormat('dd/MM/yyyy');
                   final String formattedDate = formatter.format(selectedDate);
                   if(selectedDepartment!.name==''){
@@ -272,7 +276,11 @@ class _CreateUserModalState extends State<CreateUserModal> {
                   if(emailController.text==''&& passwordController.text==''){
                     showAlerDialog("Worning!", "Email and Password required!");
                   }else{
+                    //encrypt("sayedmainuddin");
+                   //var  userData="${userNameController.text}|${firstnameController.text}|${lastnameController.text}|${firstnameController.text+" "+lastnameController.text}|${emailController.text}|${passwordController.text}|${formattedDate.toString()}|$genderRadioBtnVal|Active|${mobileController.text}|${addressController.text}|${selectedDepartment!.name}";
+                    //String encryptedUserData = encrypt(userData);
                     apiController.createNewUser(context,{"UserName":userNameController.text,"FirstName":firstnameController.text,"LastName":lastnameController.text,"FullName":firstnameController.text+" "+lastnameController.text,"Email":emailController.text,"Password":passwordController.text,"DOB":formattedDate.toString(),"Gender":genderRadioBtnVal,"AccountStatus":"Active","MobileNo":mobileController.text,"Address":addressController.text,"Department":selectedDepartment!.name});
+                    //apiController.createNewUser(context,{"EncryptedData":encryptedUserData});
 
                   }
                   // TODO: Implement user creation logic

@@ -17,69 +17,71 @@ class FileInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(defaultPadding),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-              //  padding: EdgeInsets.all(defaultPadding * 0.75),
-                height: 70,
-                width: 60,
-                decoration: BoxDecoration(
-                    color: Get.isDarkMode?Colors.white:Colors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                    Icons.people_outline,
-                    color: Get.isDarkMode?Colors.black:Colors.black
-                )
-              ),
-            //  Icon(Icons.more_vert, color: Colors.white54)
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "${title} : ",
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 22,
-                    color: Get.isDarkMode?Colors.white:Colors.white
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-
-
-
-
-            ],
-          ),
-          Text(
-            "${info.toString()}",
-            style: TextStyle(
-                color: Get.isDarkMode?Colors.white:Colors.white,
-                fontSize: 22
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(defaultPadding),
+        decoration: BoxDecoration(
+          color: secondaryColor,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              height: 10,
             ),
-          ),
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  //  padding: EdgeInsets.all(defaultPadding * 0.75),
+                    height: 70,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: Get.isDarkMode?Colors.white:Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                        Icons.people_outline,
+                        color: Get.isDarkMode?Colors.black:Colors.black
+                    )
+                ),
+                //  Icon(Icons.more_vert, color: Colors.white54)
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "${title} : ",
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 22,
+                      color: Get.isDarkMode?Colors.white:Colors.white
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+
+
+
+              ],
+            ),
+            Text(
+              "${info.toString()}",
+              style: TextStyle(
+                  color: Get.isDarkMode?Colors.white:Colors.white,
+                  fontSize: 22
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

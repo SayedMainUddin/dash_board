@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dash_board/utils/encrypt.dart';
 import 'package:http/http.dart' as http;
 import 'package:dash_board/models/ChatMessage.dart';
 import 'package:dash_board/models/message.dart';
@@ -35,7 +36,18 @@ class UserChatController extends GetxController{
   final isChatLoadComplete = false.obs;
   final isKeyPressed = false.obs;
   void loadReceiveData(data, loadmore) {
-  //    print(data);
+    // final encryptedData = 'V1cR1/KX/YahRypjCAi34A==';
+    // final secretKey = '65bb785223571ee01f4a8dc4';
+    // final customIV = "yourcustomIV1234";
+    //
+    // try {
+    //   final decryptedData = decrypt(encryptedData, secretKey, customIV);
+    //   print('Decrypted: $decryptedData');
+    // } catch (error) {
+    //   // Handle the decryption error here
+    //   print('Decryption error: $error');
+    // }
+      print(data);
     var json = jsonEncode(data);
     Map<String, dynamic> map = jsonDecode(json);
     if (map["SenderInfo"] == '' || map["SenderInfo"] == null) {
