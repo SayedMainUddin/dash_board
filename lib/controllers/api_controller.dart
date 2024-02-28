@@ -19,9 +19,9 @@ class ApiController extends GetxController {
   final userList=<User>[].obs;
   final departmentList=<Department>[].obs;
   final mutedUserList=<User>[].obs;
+  final onlineUserList=<User>[].obs;
   final groupList=<Group>[].obs;
   final mode="Light".obs;
-  var onlineUserList = [].obs;
   var onlineusername = "name";
   var onlineNameList = [].obs;
   var onlineImageList = [].obs;
@@ -36,7 +36,12 @@ class ApiController extends GetxController {
     newUser= userList
         .where((user) =>
     user.userName!.toLowerCase().contains(query) ||
-        user.email!.toLowerCase().contains(query))
+        user.email!.toLowerCase().contains(query)||
+        user.mobile!.toLowerCase().contains(query)||
+        user.time!.toLowerCase().contains(query)||
+        user.dob!.toLowerCase().contains(query)
+
+    )
         .toList();
     userList.value=newUser;
     if(value==''){
@@ -56,35 +61,7 @@ class ApiController extends GetxController {
       fetchGroups({"AdminId": LocalStorage.ADMINID});
     }
   }
-  onlineUserIdentify() {
-    //  onlineArrayList = [];
 
-    // onlineArrayList = localStorage.usrOnlineList;
-    for (var i = 0; i < temporaryOnlineUserList.length; i++) {
-
-      var usrFrmCnn = temporaryOnlineUserList[i]['OwnId'];
-      for (var index = 0; index < userList.length; ++index) {
-        if (userList[index].uniqueId == usrFrmCnn) {
-          userList[index].isOnline = "true";
-        } else {
-          if (userList[index].isOnline == "true") {
-            for (var j = 0; j < temporaryOnlineUserList.length; j++) {
-              var usrFrmCnn = temporaryOnlineUserList[j]['OwnId'];
-              if (usrFrmCnn == userList[index].uniqueId) {
-
-                userList[index].isOnline = "true";
-                onlineUserList.add(usrFrmCnn);
-              }
-            }
-          }
-          else {
-            userList[index].isOnline = "false";
-          }
-        }
-      }
-    }
-update();
-  }
   MenuAppController controller=MenuAppController();
   void toggleTheme() {
     Get.changeTheme(Get.isDarkMode? ThemeData.light(): ThemeData.dark());
@@ -255,34 +232,39 @@ update();
 
     if (response.statusCode == 200) {
       final List<dynamic> userDataList = json.decode(response.body);
-   //   print('total users from api:$userDataList');
+   //  print('total users from api:$userDataList');
       // var userId,userName,userAddress;
       // for(var i=0;userDataList.length>i;i++){
       //   final User currentUser=User(
       //     userId: userDataList[i]['_id']
       //   );
       // }
+
       var userOnline;
       List<User> currentUserList = userDataList
           .where((userData) => userData['AccountStatus'] != 'None')
           .map((userData) {
-        if(onlineUserList.contains(userData['_id'])){
-          userOnline="true";
-
-        }else{
-          userOnline="false";
-
-        }
+        // if(onlineUserList.contains(userData['_id'])){
+        //   userOnline=true;
+        //
+        // }else{
+        //   userOnline=false;
+        //
+        // }
         return User(
           userId: userData['_id'],
-          userImageUrl: userData['ProfilePic'] == null || userData['ProfilePic'] == "" ? "assets/images/profile_pic.png" : userData['ProfilePic'],
+          userImageUrl: userData['ProfilePic'] == null || userData['ProfilePic'] == "" ? "assets/images/logo.png" : "${WebApi.basesUrl}${userData['ProfilePic'].toString().substring(2)}",
           userName: userData['FullName'] ?? "",
           userDepartment:  userData['Department'] ?? "",
           email: userData['Email'] ?? "",
           password: userData['Password'] ?? "",
           address: userData['Address'] ?? "",
+          mobile: userData["MobileNo"]??'',
+          dob: userData["DOB"]??"",
+          gender: userData["Gender"]??"",
+          time: userData["SortingDate"]??"",
           status: userData['AccountStatus'] ?? "Active",
-          isOnline: userOnline
+
           // Add other properties as needed
         );
       }).toList();
@@ -291,16 +273,41 @@ update();
           .map((userData) {
         return User(
           userId: userData['_id'],
-          userImageUrl: userData['ProfilePic'] == null || userData['ProfilePic'] == "" ? "assets/images/profile_pic.png" : userData['ProfilePic'],
+          userImageUrl: userData['ProfilePic'] == null || userData['ProfilePic'] == "" ? "assets/images/logo.png" :"${WebApi.basesUrl}${userData['ProfilePic'].toString().substring(2)}",
           userName: userData['FullName'] ?? "",
           userDepartment:  userData['Department'] ?? "",
           email: userData['Email'] ?? "",
           password: userData['Password'] ?? "",
           address: userData['Address'] ?? "",
+          mobile: userData["MobileNo"]??'',
+          dob: userData["DOB"]??"",
+          gender: userData["Gender"]??"",
+          time: userData["SortingDate"]??"",
           status: userData['AccountStatus'] ?? "InActive",
           // Add other properties as needed
         );
       }).toList();
+      List<User> onlineUserLists = userDataList
+          .where((userData) => userData['isOnline'] == true)
+          .map((userData) {
+        return User(
+          userId: userData['_id'],
+          userImageUrl: userData['ProfilePic'] == null || userData['ProfilePic'] == "" ? "assets/images/logo.png" : "${WebApi.basesUrl}${userData['ProfilePic'].toString().substring(2)}",
+          userName: userData['FullName'] ?? "",
+          userDepartment:  userData['Department'] ?? "",
+          email: userData['Email'] ?? "",
+          password: userData['Password'] ?? "",
+          address: userData['Address'] ?? "",
+          mobile: userData["MobileNo"]??'',
+         dob: userData["DOB"]??"",
+          gender: userData["Gender"]??"",
+          time: userData["SortingDate"]??"",
+          status: userData['AccountStatus'] ?? "InActive",
+          isOnline: userData['isOnline'] ?? true,
+          // Add other properties as needed
+        );
+      }).toList();
+      onlineUserList.value=onlineUserLists;
       mutedUserList.value=mutedUsers;
       userList.value = currentUserList;
      // print(userList[0].isOnline);
@@ -322,13 +329,31 @@ update();
 
     if (response.statusCode == 200) {
       toggleSuccess(context,"User has been muted successfully!");
-      fetchUsers({"AdminId": "6545cc78434c8b5bd35c9133"});
+      fetchUsers({"AdminId": LocalStorage.ADMINID});
     } else {
       throw Exception('Failed to load data');
     }
     update();
   }
 
+  Future<void> getOnlineUsers(BuildContext context,Map<String, dynamic> data) async {
+    final response = await http.post(Uri.parse('${WebApi.basesUrl}/api/getallonlineusers'),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+   //   toggleSuccess(context,"User has been muted successfully!");
+      fetchUsers({"AdminId": LocalStorage.ADMINID});
+    } else {
+      throw Exception('Failed to load data');
+    }
+    update();
+  }
 
   ///Group
   Future<void> fetchGroups(Map<String, dynamic> data) async {
@@ -350,7 +375,7 @@ update();
               id: groupData['_id'],
           adminID: groupData['Admin']??"",
           groupName: groupData['GroupName']??"",
-          groupPic: groupData['GroupPic']==null||groupData['GroupPic']==''?"assets/images/group.png":groupData['GroupPic'].toString().substring(2),
+          groupPic: groupData['GroupPic']==null||groupData['GroupPic']==''?"assets/images/group.png":"${WebApi.basesUrl}${groupData['GroupPic'].toString().substring(2)}",
           membersID: groupData['MembersID']??[],
           privacy: groupData['Privacy']??"",
           dateTime: groupData['DateTime']??""
@@ -433,14 +458,8 @@ update();
     // TODO: implement onInit
     super.onInit();
     socketController.socket.emit('usrSocketIdForOnline',
-        {"OwnId": LocalStorage.ADMINID, "SocketId": socketController.socket.id}
+        {"OwnId": LocalStorage.ADMINID, "SocketId": socketController.socketId}
     );
-    socketController.socket.off('onlineUsersArray');
-    socketController.socket.on('onlineUsersArray', (data) {
-      temporaryOnlineUserList.value=data;
-      print(data);
-      onlineUserIdentify();
-    });
 
   }
 }

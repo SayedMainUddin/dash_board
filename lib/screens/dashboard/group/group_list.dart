@@ -162,11 +162,11 @@ setState(() {
                 DataColumn(
                   label: Text("Group"),
                 ),
-                !Responsive.isMobile(context)?  DataColumn(
-                  label: Text("Privacy"),
-                ):DataColumn(
-                  label: Text(""),
-                ),
+                // !Responsive.isMobile(context)?  DataColumn(
+                //   label: Text("Privacy"),
+                // ):DataColumn(
+                //   label: Text(""),
+                // ),
                 !Responsive.isMobile(context)?    DataColumn(
                   label: Text("Members"),
                 ):DataColumn(
@@ -221,10 +221,14 @@ setState(() {
             },
             child: Row(
               children: [
+                // CircleAvatar(
+                //   child: groupInfo.groupPic.startsWith('/Image') // Assuming network images start with 'http'
+                //       ? Image.network("${WebApi.basesUrl}/Image/file-Image1699078792621.jpg")
+                //       : Image.asset(groupInfo.groupPic),
+                // ),
                 CircleAvatar(
-                  child: groupInfo.groupPic.startsWith('/Image') // Assuming network images start with 'http'
-                      ? Image.network("${WebApi.basesUrl}/Image/file-Image1699078792621.jpg")
-                      : Image.asset(groupInfo.groupPic),
+
+                  child: Image.network(groupInfo.groupPic),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
@@ -237,9 +241,9 @@ setState(() {
             ),
           ),
         ),
-        !Responsive.isMobile(context)
-            ? DataCell(Text(groupInfo.privacy))
-            : DataCell(Text("")),
+        // !Responsive.isMobile(context)
+        //     ? DataCell(Text(groupInfo.privacy))
+        //     : DataCell(Text("")),
         !Responsive.isMobile(context)
             ? DataCell(Text(groupInfo.membersID.length.toString()))
             : DataCell(Text("")),

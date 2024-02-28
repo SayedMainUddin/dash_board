@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dash_board/AllUserControl/home.dart';
+import 'package:dash_board/main.dart';
 import 'package:dash_board/models/Users.dart';
+import 'package:dash_board/screens/dashboard/dashboard_screen.dart';
 import 'package:dash_board/screens/dashboard/user/image_preview.dart';
 import 'package:dash_board/screens/dashboard/user/user_controller/user_chat_controller.dart';
 import 'package:dash_board/widgets/message_bubble.dart';
@@ -217,7 +220,7 @@ class _ChatModalState extends State<ChatModal> {
       // On web, use FilePickerResult.fromResultUrl to get the file
       selectedFileResult = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg','png','jpeg', 'pdf', 'doc','docx','txt','mp3','wav','zip','aab','mp4','mov','aac','mkv','wmv','flv','webm','xls','xlss'],
+        allowedExtensions: ['jpg','png','jpeg','gif', 'pdf', 'doc','docx','txt','mp3','wav','zip','aab','mp4','mov','aac','mkv','wmv','flv','webm','xls','xlss'],
       );
     } else {
       selectedFileResult = await FilePicker.platform.pickFiles(
@@ -429,6 +432,8 @@ class _ChatModalState extends State<ChatModal> {
     super.dispose();
 
     qualityController.dispose();
+    socketController.socket.off("loadAllChat");
+    socketController.socket.off("loadData");
   }
   @override
   Widget build(BuildContext context) {
@@ -440,6 +445,7 @@ class _ChatModalState extends State<ChatModal> {
       elevation: 0.0,
       backgroundColor: Colors.transparent,
       child: Container(
+        alignment: Alignment.center,
         padding: EdgeInsets.all(16.0),
         width: MediaQuery.of(context).size.width*0.40,
         height: MediaQuery.of(context).size.width*0.40,
@@ -451,34 +457,40 @@ class _ChatModalState extends State<ChatModal> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
 
-            Text(
-              'Send message to: ${widget.receiverName}',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(),
+                Text(
+                  'Send message to: ${widget.receiverName}',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black
+                  ),
+                ),
+                IconButton(onPressed: (){
+                 //Get.to(()=>MyApp());
+                  Navigator.pop(Get.context!);
+                  userChatController.dataProcessed.value=false;
+                }, icon: Icon(Icons.disabled_by_default_outlined))
+              ],
             ),
-            // if (fileBytes != null  )
-            //   FilePreview(fileBytes: fileBytes!, isImage: isImage),
-
-
-            // if (fileBytes != null  )
-            //   //if(isSentFile==true)
-            // Container(
-            //   height: 100,
-            //   width: 300,
-            //   child: checkFileType(fileBytes!),
-            // ),
-          //  SizedBox(height: 16.0),
-            Text("End to encrypted",
-              style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey
-              ),),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock_open,size: 20,),
+                Text("End-to-end-encrypted",
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey
+                  ),),
+              ],
+            ),
             // userChatController.messages.isEmpty?
             //     Center(
             //       child: CircularProgressIndicator(),
@@ -609,6 +621,7 @@ class _ChatModalState extends State<ChatModal> {
 void showChatModal(BuildContext context, String receiverName,String receiverId,String receiverType ) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return ChatModal(receiverName:  receiverName,selectedId: receiverId,receiverType: receiverType,);
     },

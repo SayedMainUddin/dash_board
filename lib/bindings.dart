@@ -1,6 +1,7 @@
 
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/controllers/api_controller.dart';
+import 'package:dash_board/screens/dashboard/activity/group/group_activity_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_controller.dart';
 import 'package:dash_board/screens/dashboard/user/user_controller/user_chat_controller.dart';
 import 'package:dash_board/widgets/theme_controller.dart';
@@ -15,6 +16,7 @@ class AppBindings extends Bindings {
    Get.lazyPut<UserChatController>(() => UserChatController());
    Get.lazyPut<ThemeController>(() => ThemeController());
    Get.lazyPut<NoticeController>(() => NoticeController());
+   Get.lazyPut<GroupActivityController>(() => GroupActivityController());
 
   }
 }

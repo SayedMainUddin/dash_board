@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dash_board/utils/encrypt.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:dash_board/models/ChatMessage.dart';
 import 'package:dash_board/models/message.dart';
@@ -47,7 +49,6 @@ class UserChatController extends GetxController{
     //   // Handle the decryption error here
     //   print('Decryption error: $error');
     // }
-      print(data);
     var json = jsonEncode(data);
     Map<String, dynamic> map = jsonDecode(json);
     if (map["SenderInfo"] == '' || map["SenderInfo"] == null) {
@@ -261,6 +262,8 @@ class UserChatController extends GetxController{
     // //print('seen status change ${currentMessage.seenStatus}');
 
   }
+  final dataProcessed = false.obs;
+
   void ChatScreenPageReady(selectId,selectType) {
 
     socketController.socket.on("seenStatusChange"+selectedId.value, (data) {
@@ -277,23 +280,29 @@ class UserChatController extends GetxController{
     loadMsgTest = [];
    // LocalStorage.blockUserCheck = 'OFF';
     socketController.socket.emit(
-        "loadAllChat", {
+        "loadAllChatWeb", {
       "UserId": LocalStorage.ADMINID,
       "SelectId": selectedId.value,
-      "UserType": selectedType.value
+      "UserType": selectedType.value,
+      // "DeviceId":LocalStorage.DEVICEID
     }
     );
-    socketController.socket.on('loadData' + LocalStorage.ADMINID, (data) {
-      var array = data;
-      for (var i = 0; i < data.length; i++) {
-        loadReceiveData(data[i], true);
+
+
+// Listen for socket events
+    socketController.socket.on('loadDataWeb' + LocalStorage.ADMINID, (data) {
+      //print("load data: $data");
+
+      // Check if data has been processed already
+      if (!dataProcessed.value) {
+        // Process the data
+        for (var i = 0; i < data.length; i++) {
+          loadReceiveData(data[i], true);
+        }
+
+        // Set the flag to true to indicate that data has been processed
+        dataProcessed.value = true;
       }
-      //  //print('load data hited');
-      //  debug//print("all data:$array");
-      // List<dynamic> reversedAnimals = array.reversed.toList();
-      // for (var i = 0; i < reversedAnimals.length; i++) {
-      //   loadReceiveData(reversedAnimals[i], true);
-      // }
     });
   }
   void removechat(msgId,selectId,type) async {
@@ -433,9 +442,14 @@ class UserChatController extends GetxController{
   }
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     // TODO: implement onInit
     super.onInit();
+    // String deviceId = await getDeviceId();
+    // print('Device ID: $deviceId');
+    // if(deviceId!=''){
+    //   LocalStorage.DEVICEID=deviceId;
+    // }
     socketController.socket.on('sentToRcvr' + LocalStorage.ADMINID ,(data) {
       var msgType = data['Type'];
       var chatType = data['ChatType'];
@@ -586,5 +600,12 @@ class UserChatController extends GetxController{
         //print('Group chat ');
       }
     });
+  }
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+   // socketController.socket.off("loadAllChat");
+  //  socketController.socket.off("loadData");
   }
 }

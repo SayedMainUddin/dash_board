@@ -1,10 +1,13 @@
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/responsive.dart';
+import 'package:dash_board/screens/dashboard/activity/group/group_activity.dart';
+import 'package:dash_board/screens/dashboard/activity/user/user_activity.dart';
 import 'package:dash_board/screens/dashboard/components/file_info_card.dart';
 import 'package:dash_board/screens/dashboard/department/department_screen.dart';
 import 'package:dash_board/screens/dashboard/group/group_list.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_screen.dart';
+import 'package:dash_board/screens/dashboard/onlineUsers/online_users.dart';
 import 'package:dash_board/screens/dashboard/user/user_list.dart';
 import 'package:dash_board/screens/notification/notification_screen.dart';
 import 'package:dash_board/screens/profile/profile_screen.dart';
@@ -43,13 +46,13 @@ final _width=MediaQuery.of(context).size.width;
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.userList.length,title: "Total User:"),
+                        child:FileInfoCard(info: apiController.userList.length,title: "Total User"),
 
                       ),
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.groupList.length,title: "Total Group:"),
+                        child:FileInfoCard(info: apiController.groupList.length,title: "Total Group"),
 
                       ),
                       Container(
@@ -95,7 +98,7 @@ final _width=MediaQuery.of(context).size.width;
                         Container(
                           height: _height*0.30,
                           width: _width*0.40,
-                          child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online Users"),
+                          child:FileInfoCard(info: apiController.temporaryOnlineUserList.length,title: "Online Users"),
 
                         ),
                         Container(
@@ -153,6 +156,8 @@ final _width=MediaQuery.of(context).size.width;
                   case MenuItem.groupList:
                   // Replace with NotificationListPage()
                     return  GroupListPage();
+                  case MenuItem.onlineUserList:
+                    return OnlineUserList();
                   case MenuItem.profile:
                   // Replace with ProfileListPage()
                     return ProfilePage();
@@ -166,6 +171,10 @@ final _width=MediaQuery.of(context).size.width;
                     return NoticePage();
                   case MenuItem.notification:
                     return NotificationListScreen();
+                  case MenuItem.userActivity:
+                    return UserActivityPage();
+                  case MenuItem.groupActivity:
+                    return GroupActivityPage();
                   default:return Container();
                 // default:
                 //   return Column(

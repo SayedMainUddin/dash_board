@@ -16,4 +16,5 @@ class LocalStorage{
  static String AdminGender="";
  static String AdminPassword="";
  static String mode="Light";
+ static var DEVICEID='';
 }

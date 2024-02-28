@@ -47,6 +47,7 @@ class NoticeDetailScreen extends StatelessWidget {
                 Text('Description: ${notice.noticeDescription}'),
                 SizedBox(height: 8),
                 Text('Deadline: ${notice.noticeDeadLine}'),
+
                 // Add other details as needed
               ],
             ),

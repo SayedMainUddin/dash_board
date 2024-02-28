@@ -360,12 +360,12 @@ class _ChatModalState extends State<GroupChatModal> {
     // TODO: implement initState
     super.initState();
     userChatController.selectedId.value=widget.selectedId!;
-    userChatController.selectedType.value="group";
+    //userChatController.selectedType.value="group";
     groupController.selectedType.value="Group";
     groupController.selectedName.value=widget.receiverName!;
     groupController.selectedId.value=widget.selectedId!;
 
-    userChatController.ChatScreenPageReady(widget.selectedId!,"group");
+    userChatController.ChatScreenPageReady(widget.selectedId!,"Group");
   }
   @override
   Widget build(BuildContext context) {
@@ -389,37 +389,37 @@ class _ChatModalState extends State<GroupChatModal> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
-            Text(
-              'Send message to: ${widget.receiverName}',
-              style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(),
+                Text(
+                  'Send message to: ${widget.receiverName}',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black
+                  ),
+                ),
+                IconButton(onPressed: (){
+                  //Get.to(()=>MyApp());
+                  Navigator.pop(Get.context!);
+                  userChatController.dataProcessed.value=false;
+                }, icon: Icon(Icons.disabled_by_default_outlined))
+              ],
             ),
-            // if (fileBytes != null  )
-            //   FilePreview(fileBytes: fileBytes!, isImage: isImage),
-
-
-            // if (fileBytes != null  )
-            //   //if(isSentFile==true)
-            // Container(
-            //   height: 100,
-            //   width: 300,
-            //   child: checkFileType(fileBytes!),
-            // ),
-            //  SizedBox(height: 16.0),
-            Text("End to encrypted",
-              style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey
-              ),),
-            // userChatController.messages.isEmpty?
-            //     Center(
-            //       child: CircularProgressIndicator(),
-            //     ):
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lock_open,size: 20,),
+                Text("End-to-end-encrypted",
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey
+                  ),),
+              ],
+            ),
             Obx(() =>    Expanded(
               child: ListView.builder(
                   itemCount: userChatController.messages.length,
@@ -573,6 +573,7 @@ class ChatBubble extends StatelessWidget {
 void showGroupChatModal(BuildContext context, String receiverName,String receiverId,String receiverType ) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return GroupChatModal(receiverName:  receiverName,selectedId: receiverId,receiverType: receiverType,);
     },

@@ -105,7 +105,7 @@ class ProfileController extends GetxController{
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    loadSharedGallery();
+   // loadSharedGallery();
 
   }
 
@@ -119,94 +119,7 @@ class ProfileController extends GetxController{
     //_scaffoldKey.currentState!.showSnackBar(new SnackBar(content: new Text(value)));
   }
 
-  Future<void> loadSharedGallery() async {
 
-    Map data = {
-      'UserId': LocalStorage.ADMINID,
-      'SelectId':LocalStorage.ADMINID ,
-      'UserType':"user",
-
-
-
-    };
-
-    final response = await http.post(Uri.parse('${WebApi.basesUrl}/sharedGallery'),
-        headers: {'connection': "keep-alive",'Authorization': 'Bearer ${LocalStorage.BearerTOKEN}'},
-
-        body: data
-    );
-
-    var json = jsonDecode(response.body);
-    //  print("Hit shared gallery");
-
-
-    //print(reply);
-    sharedGalleryList.value=[];
-    sharedGalleryFileList.value=[];
-    previewsharedGalleryList=[];
-    previewsharedGalleryFileList=[];
-    if (response.statusCode == 200) {
-      var xtrNormTxt='';
-      //  print("Shared Gallery Length: ${json.length}");
-      for (var i = 0; i < json.length; i++) {
-        if(json[i]['Type']=="File"){
-          final MESSAGE currentMessage = MESSAGE(
-              id: json[i]['_id'],
-              msgType:json[i]['Type'] ,
-              messageText: json[i]['Message'],
-              fileSize: json[i]['FileSize']
-          );
-          sharedGalleryFileList.add(currentMessage);
-          previewsharedGalleryFileList.add(json[i]['Message']);
-        }
-        // print(sharedGalleryFileList[i].fileSize);
-        if(json[i]['Type']=="Image"||json[i]['Type']=="Multi-Image"){
-
-
-          if(json[i]['Type']=='Multi-Image'){
-            print(json[i]['Message'].length);
-            for(var j=0;j<json[i]['Message'].length;j++){
-              xtrNormTxt = xtrNormTxt + ','+  json[i]['Message'][j]["FileName"].toString();
-              print('all messages : ${json[i]['Message'][j]["FileName"].toString().substring(2)}');
-              print('all messages2 : $xtrNormTxt');
-            }
-
-
-
-            var groupImage = xtrNormTxt.toString().split(",");
-            print('total image length : ${groupImage.length}');
-            for(var k=1;k<groupImage.length;k++){
-              final MESSAGE currentMessage = MESSAGE(
-                  id: json[i]['_id'],
-                  msgType:json[i]['Type'] ,
-                  messageText: groupImage[k]
-              );
-              sharedGalleryList.add(currentMessage);
-              previewsharedGalleryList.add(groupImage[k]);
-            }
-          }else{
-            final MESSAGE currentMessage = MESSAGE(
-                id: json[i]['_id'],
-                msgType:json[i]['Type'] ,
-                messageText: json[i]['Message']
-            );
-            sharedGalleryList.add(currentMessage);
-            previewsharedGalleryList.add(json[i]['Message']);
-          }
-        }
-      }
-      // if(mounted){
-      //   setState(() {
-      //     sharedGalleryList=sharedGalleryList;
-      //   });
-      // }
-      // if(mounted){
-      //   setState(() {
-      //     sharedGalleryFileList=sharedGalleryFileList;
-      //   });
-      // }
-    };
-  }
   void UserProfilePost() async {
 
     Map data = {

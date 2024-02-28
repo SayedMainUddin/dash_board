@@ -1,11 +1,13 @@
 import 'dart:io';
-
+import 'dart:js';
+import 'dart:html' as html;
 import 'package:dash_board/bindings.dart';
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/screens/login/login_screen.dart';
 import 'package:dash_board/screens/main/main_screen.dart';
 import 'package:dash_board/utils/local_storage.dart';
 import 'package:dash_board/utils/socket.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +18,24 @@ class MyHttpOverrides extends HttpOverrides {
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
   }
+}
+Future<String> getDeviceId() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  String deviceId = '';
+
+  try {
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceId = androidInfo.id; // Use Android ID as device ID
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceId = iosInfo.identifierForVendor!; // Use iOS identifierForVendor as device ID
+    }
+  } catch (e) {
+    print('Failed to get device ID: $e');
+  }
+
+  return deviceId;
 }
 Future<void> main() async {
   HttpOverrides.global = new MyHttpOverrides();

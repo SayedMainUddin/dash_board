@@ -37,15 +37,21 @@ class _SideMenuState extends State<SideMenu> {
 
               image: DecorationImage(image:AssetImage("assets/images/loto_trans.png"))
             ),
+
             child: SizedBox(
-              height: 20,
+              height: 0,
             ),
             padding: EdgeInsets.all(20),
             margin: EdgeInsets.all(40),
 
             //child: Image.asset("assets/images/logo.png"),
           ),
-   
+          DrawerListTile(
+            title: "Department",
+            svgSrc: "assets/icons/menu_doc.svg",
+            menuItem: MenuItem.department,
+            icon: Icon(Icons.category,color: Colors.white,),
+          ),
           DrawerListTile(
             title: "User List",
             svgSrc: "assets/icons/menu_dashboard.svg",
@@ -57,31 +63,37 @@ class _SideMenuState extends State<SideMenu> {
             menuItem: MenuItem.groupList,
 
           ),
-          DrawerListTile(
-            title: "Admin Profile",
-            svgSrc: "assets/icons/menu_profile.svg",
-            menuItem: MenuItem.profile,
-          ),
-          DrawerListTile(
-            title: "Department",
-            svgSrc: "assets/icons/menu_profile.svg",
-            menuItem: MenuItem.department,
-            icon: Icon(Icons.category,color: Colors.white,),
-          ),
+
+
           DrawerListTile(
             title: "Notice",
             svgSrc: "assets/icons/menu_task.svg",
             menuItem: MenuItem.notice,
             icon: Icon(Icons.category,color: Colors.white,),
           ),
-          // DrawerListTile(
-          //   title: "Notification",
-          //   svgSrc: "assets/icons/menu_notification.svg",
-          //   menuItem: MenuItem.notification,
-          //   icon: Icon(Icons.category,color: Colors.white,),
-          // ),
-
-
+          DrawerListTile(
+            title: "Online Users",
+            svgSrc: "assets/icons/menu_notification.svg",
+            menuItem: MenuItem.onlineUserList,
+            icon: Icon(Icons.online_prediction,color: Colors.white,),
+          ),
+          DrawerListTile(
+            title: "Users Activity",
+            svgSrc: "assets/icons/drop_box.svg",
+            menuItem: MenuItem.userActivity,
+            icon: Icon(Icons.local_activity_outlined,color: Colors.white,),
+          ),
+          DrawerListTile(
+            title: "Group Activity",
+            svgSrc: "assets/icons/menu_tran.svg",
+            menuItem: MenuItem.groupActivity,
+            icon: Icon(Icons.local_activity,color: Colors.white,),
+          ),
+          DrawerListTile(
+            title: "Admin Profile",
+            svgSrc: "assets/icons/menu_profile.svg",
+            menuItem: MenuItem.profile,
+          ),
 
 
 

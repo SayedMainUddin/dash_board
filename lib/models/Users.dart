@@ -17,7 +17,7 @@ class User {
   final String? status;
   final String? time;
   final String? currentMessage;
-   String? isOnline;
+   bool? isOnline;
   final String? notificationCount;
   final String? notificationStatus;
   final String? forwardCount;
@@ -105,6 +105,7 @@ class User {
       forwardCount: json['forwardCount'],
       gender: json['gender'],
       isGroup: json['isGroup'],
+      isOnline: json['isOnline'] == true,
 
 
     );

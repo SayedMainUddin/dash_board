@@ -10,6 +10,7 @@ import 'package:dash_board/screens/dashboard/user/delete.dart';
 import 'package:dash_board/screens/dashboard/user/edit_user.dart';
 import 'package:dash_board/screens/dashboard/user/mute_unmute_user.dart';
 import 'package:dash_board/screens/dashboard/user/send_to_all.dart';
+import 'package:dash_board/screens/dashboard/user/user_controller/user_chat_controller.dart';
 import 'package:dash_board/screens/dashboard/user/user_details.dart';
 import 'package:dash_board/utils/local_storage.dart';
 
@@ -23,34 +24,24 @@ import '../../../../constants.dart';
 List selectedUsers = [];
 
 
-class UserListPage extends StatefulWidget {
+class OnlineUserList extends StatefulWidget {
   //  ApiController apiController;
   //
-  UserListPage({
+  OnlineUserList({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<UserListPage> createState() => _UserListPageState();
+  State<OnlineUserList> createState() => _UserListPageState();
 }
 
-class _UserListPageState extends State<UserListPage> {
+class _UserListPageState extends State<OnlineUserList> {
   final ApiController apiController = Get.find<ApiController>();
-
-
-  Future<void> _fetchGroupData() async {
-
-    await apiController.fetchGroups({"AdminId":LocalStorage.ADMINID}); // Adjust 'users' according to your API endpoint
-
-    setState(() {
-
-    });
-  }
 
   void initState() {
     super.initState();
     _fetchUserData();
-    _fetchGroupData();
+
 
   }
 
@@ -66,83 +57,83 @@ class _UserListPageState extends State<UserListPage> {
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-     //   color: secondaryColor,
+        //   color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child:GetBuilder<ApiController>(builder: (controller){
-       // final filteredUsers = apiController.getFilteredUsers();
+        // final filteredUsers = apiController.getFilteredUsers();
 
         return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    "Users List",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  IconButton(onPressed: (){
-                    _fetchUserData();
-                  }, icon: Icon(Icons.refresh))
-                ],
-              ),
-              Container(
-                width: 250,
-                height: 30,
-                child: SearchBar(
-                 hintText: "Search user by any field",
-                  leading: Icon(Icons.search),
-                  //onChanged: apiController.setSearchQuery,
-                  onChanged: (String? value){
-                   apiController.getFilteredUsers(value);
-                  },
-                ),
-              ),
-
-              selectedUsers.length>0? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
-                child:Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
                     Text(
-                      "Send to selected",
+                      "Users List",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    IconButton(
-                      onPressed: (){
-                        showSendToAllChatModal(context,selectedUsers);
-                      },
-                      icon: Icon(Icons.message_outlined,color: Colors.teal,),
-                    ),
+                    IconButton(onPressed: (){
+                      _fetchUserData();
+                    }, icon: Icon(Icons.refresh))
                   ],
                 ),
-              ):
-              ElevatedButton.icon(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: defaultPadding * 1.5,
-                    vertical:
-                    defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
+                Container(
+                  width: 200,
+                  height: 30,
+                  child: SearchBar(
+                    hintText: "Search by name",
+                    leading: Icon(Icons.search),
+                    //onChanged: apiController.setSearchQuery,
+                    onChanged: (String? value){
+                      apiController.getFilteredUsers(value);
+                    },
                   ),
                 ),
-                onPressed: () {
-                  showCreateUserModal(context);
-                },
-                icon: Icon(Icons.add),
-                label: Text("Create User"),
-              ),
 
-            ],
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: DataTable(
-              columnSpacing: defaultPadding,
-              // minWidth: 600,
-              columns: [
-                /*  DataColumn(
+                selectedUsers.length>0? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
+                  child:Row(
+                    children: [
+                      Text(
+                        "Send to selected",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      IconButton(
+                        onPressed: (){
+                          showSendToAllChatModal(context,selectedUsers);
+                        },
+                        icon: Icon(Icons.message_outlined,color: Colors.teal,),
+                      ),
+                    ],
+                  ),
+                ):
+                ElevatedButton.icon(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: defaultPadding * 1.5,
+                      vertical:
+                      defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
+                    ),
+                  ),
+                  onPressed: () {
+                    showCreateUserModal(context);
+                  },
+                  icon: Icon(Icons.add),
+                  label: Text("create User"),
+                ),
+
+              ],
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: DataTable(
+                columnSpacing: defaultPadding,
+                // minWidth: 600,
+                columns: [
+                  /*  DataColumn(
                   label: SizedBox(
                     width: 24,
                     height: 24,
@@ -160,38 +151,33 @@ class _UserListPageState extends State<UserListPage> {
                   ),
                 ),*/
 
-                DataColumn(
-                  label: Text("User"),
-                ),
-                !Responsive.isMobile(context)?  DataColumn(
-                  label: Text("Email"),
-                ):DataColumn(
-                  label: Text(""),
-                ),
-                !Responsive.isMobile(context)?    DataColumn(
-                  label: Text("Mobile No"),
-                ):DataColumn(
-                  label: Text(""),
-                ),
-                !Responsive.isMobile(context)?    DataColumn(
-                  label: Text("Created Date"),
-                ):DataColumn(
-                  label: Text(""),
-                ),
-                DataColumn(
-                  label: Text("Action"),
-                ),
-              ],
+                  DataColumn(
+                    label: Text("User"),
+                  ),
+                  !Responsive.isMobile(context)?  DataColumn(
+                    label: Text("Email"),
+                  ):DataColumn(
+                    label: Text(""),
+                  ),
+                  !Responsive.isMobile(context)?    DataColumn(
+                    label: Text("Address"),
+                  ):DataColumn(
+                    label: Text(""),
+                  ),
+                  DataColumn(
+                    label: Text("Action"),
+                  ),
+                ],
 
-              rows:  List.generate(
-                controller.userList.length,
-                    (index) => recentFileDataRow(context,controller.userList[index]),
+                rows:  List.generate(
+                  controller.onlineUserList.length,
+                      (index) => recentFileDataRow(context,controller.onlineUserList[index]),
+                ),
               ),
             ),
-          ),
 
-        ],
-      );}),
+          ],
+        );}),
     );
   }
 
@@ -235,24 +221,34 @@ class _UserListPageState extends State<UserListPage> {
                 //   decoration: BoxDecoration(
                 //     borderRadius: BorderRadius.circular(50),
                 //     border: Border.all(
-                //       color: userInfo.isOnline=="true"?Colors.green:Colors.transparent
+                //       color:Colors.green
                 //     )
                 //   ),
-                //   width: 100,
-                //   height: 100,
-                //   child: Image.network(userInfo.userImageUrl!),
+                //
+                //   child: Image.network(userInfo.userImageUrl!,width: 30,height: 30),
                 // ),
-                CircleAvatar(
+                Container(
 
-                  child: Image.network(userInfo.userImageUrl!),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color:Colors.green
+                    )
+                  ),
+
+                  child: CircleAvatar(
+
+                    child: Image.network(userInfo.userImageUrl!),
+                  ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: Text(userInfo.userName!,overflow: TextOverflow.ellipsis,style:
-                    TextStyle(
-                     // color: Colors.green
-                     // color: userInfo.isOnline=="true"?Colors.green:Colors.black
-                    ),),
+                  TextStyle(
+                    // color: Colors.green
+                    // color: userInfo.isOnline=="true"?Colors.green:Colors.black
+                  ),),
                 ),
               ],
             ),
@@ -262,11 +258,9 @@ class _UserListPageState extends State<UserListPage> {
             ? DataCell(Text(userInfo.email!))
             : DataCell(Text("")),
         !Responsive.isMobile(context)
-            ? DataCell(Text(userInfo.mobile!))
+            ? DataCell(Text(userInfo.address!))
             : DataCell(Text("")),
-        !Responsive.isMobile(context)
-            ? DataCell(Text(userInfo.time!))
-            : DataCell(Text("")),
+
         DataCell(
           Row(
             children: [
@@ -282,6 +276,7 @@ class _UserListPageState extends State<UserListPage> {
                 child:           IconButton(onPressed: (){
                   showMuteUserModal(context, () {
                     apiController.muteUser(context,{"UserId":userInfo.userId,"AdminId":LocalStorage.ADMINID,"UserStatus":"Active"});
+                    print('User account deleted!');
 
                   });
 
@@ -298,32 +293,26 @@ class _UserListPageState extends State<UserListPage> {
 
                 },icon: Icon(Icons.airplanemode_active,color: Colors.deepOrange,),),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
-              //   child: IconButton(
-              //     onPressed: (){
-              //     showDeleteUserModal(context, () {
-              //       apiController.deleteUser(context,{"UserId":userInfo.userId,"AdminId":LocalStorage.ADMINID});
-              //       setState(() {
-              //
-              //       });
-              //     });
-              //     // showUserDetailModal(context,user: userInfo);
-              //   },icon: Icon(Icons.delete_outline,color: Colors.red,),),
-              // ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
-                child:IconButton(onPressed: (){
-                  showChatModal(context, userInfo.userName!,userInfo.userId!,"user");
-                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child: IconButton(
                   onPressed: (){
+                    showDeleteUserModal(context, () {
+                      apiController.deleteUser(context,{"UserId":userInfo.userId,"AdminId":LocalStorage.ADMINID});
+                      setState(() {
 
-                   showUserDetailModal(context,user: userInfo);
-                },icon: Icon(Icons.details_outlined,color: Colors.green,),),
+                      });
+                    });
+                    // showUserDetailModal(context,user: userInfo);
+                  },icon: Icon(Icons.delete_outline,color: Colors.red,),),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
+                child:IconButton(onPressed: (){
+                  // Create a new instance of the UserChatController
+
+                  showChatModal(context, userInfo.userName!,userInfo.userId!,"user");
+                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
               ),
             ],
           ),

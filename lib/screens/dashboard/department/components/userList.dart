@@ -1,6 +1,7 @@
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/screens/dashboard/department/components/callback.dart';
 import 'package:dash_board/utils/local_storage.dart';
+import 'package:dash_board/utils/urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -151,15 +152,93 @@ class DepartmentListTable extends StatelessWidget {
       },
     );
   }
+  void showDepartmentDetails(BuildContext context, String department) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Users in $department Department'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: apiController.userList
+                  .where((user) => user.userId!.startsWith(department))
+                  .map((user) => ListTile(
+                title: Text(user.userName!),
+              ))
+                  .toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void showUsersByDepartment(BuildContext context, String departmentName) {
+    List<User> usersInDepartment = apiController.userList.where((user) => user.userDepartment == departmentName).toList();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Users in $departmentName Department'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var user in usersInDepartment)
+                ListTile(
+                 // leading: Image.network("${WebApi.basesUrl}${user.userImageUrl.toString().substring(2)}"),
+                  title: Text(user.userName ?? ''),
+                  subtitle: Text(user.email??''),
+                  trailing: Text(user.mobile??''),
+                ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+
+
+    // Map to store department-wise user count
+    Map<String, int> departmentCounts = {};
+
+    // Iterate through the userList to count users in each department
+    for (var user in apiController.userList) {
+      if (departmentCounts.containsKey(user.userDepartment)) {
+        departmentCounts[user.userDepartment!] = departmentCounts[user.userDepartment]! + 1;
+      } else {
+        departmentCounts[user.userDepartment!] = 1;
+      }
+    }
+
+    // Print department-wise user counts
+    departmentCounts.forEach((department, count) {
+      print('Department: $department, User Count: $count');
+    });
     return  SizedBox( width: double.infinity,
         child: DataTable(
 
           columns: [
             DataColumn(label: Text('Department')),
             DataColumn(label: Text('Department Head')),
+            DataColumn(label: Text('Users')),
             DataColumn(label: Text('Action')),
           ],
           rows: departmentList.map((department) {
@@ -167,6 +246,15 @@ class DepartmentListTable extends StatelessWidget {
               cells: [
                 DataCell(Text(department.name)),
                 DataCell(Text(department.departmentHead??"")),
+              //  DataCell(Text(departmentCounts[department.name].toString())),
+                DataCell(
+                  ElevatedButton(
+                    onPressed: () {
+                      showUsersByDepartment(context, department.name);
+                    },
+                    child: Text(departmentCounts[department.name].toString())
+                  ),
+                ),
                 DataCell(
                     Row(
                       children: [

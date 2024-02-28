@@ -50,6 +50,7 @@ dependencies:
   file_picker: ^5.2.10
   flutter_cache_manager: ^3.3.1
   syncfusion_flutter_pdfviewer: ^24.1.45
+  device_info_plus: ^9.1.0
   image_downloader_web: ^2.0.4
   encrypt: ^5.0.3
   pointycastle: ^3.7.4

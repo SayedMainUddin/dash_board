@@ -1,14 +1,17 @@
+import 'package:dash_board/constants.dart';
+import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/notice.dart';
+import 'package:dash_board/screens/dashboard/activity/group/group_activity_controller.dart';
+import 'package:dash_board/screens/dashboard/group/group_controllers/group_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_description.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../constants.dart';
 
-
-class NoticePage extends StatelessWidget {
-  final NoticeController noticeController = Get.put(NoticeController());
+class GroupActivityPage extends StatelessWidget {
+  final GroupActivityController groupActivityController = Get.put(GroupActivityController());
+  final ApiController apiController=Get.put(ApiController());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +20,7 @@ class NoticePage extends StatelessWidget {
         //   color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      child:GetBuilder<NoticeController>(builder: (controller){
+      child:GetBuilder<GroupActivityController>(builder: (controller){
         // final filteredUsers = apiController.getFilteredUsers();
 
         return SingleChildScrollView(
@@ -32,9 +35,9 @@ class NoticePage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("NoticeList"),
+                          Text("Group Activity List"),
                           IconButton(onPressed: (){
-                            controller.fetchNotices();
+                            controller.fetchActivity();
                           }, icon: Icon(Icons.refresh)
                           ),
                         ],
@@ -47,39 +50,30 @@ class NoticePage extends StatelessWidget {
                               fontWeight: FontWeight.bold
                           ),),
                           SizedBox(width: 20,),
-                          Text("Title",style: TextStyle(
+                          Text("Type",style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold
                           ),),
+
+
                           SizedBox(width: 100,),
                           Text("Description",style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 100,),
 
-                          Text("Seen Users",style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),),
-                          SizedBox(width: 100,),
-
-                          Text("Unseen Users",style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),),
 
                         ],
                       ),
                     ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Open the create notice modal
-                      _showCreateNoticeDialog(context);
-                    },
-                    child: Text('Create Notice'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     // Open the create notice modal
+                  //     _showCreateNoticeDialog(context);
+                  //   },
+                  //   child: Text('Create Notice'),
+                  // ),
                 ],
               ),
               SizedBox(height: 20),
@@ -89,139 +83,111 @@ class NoticePage extends StatelessWidget {
                 child:Obx(() {
                   var i=1;
                   return ListView.separated(
-                    itemCount: controller.notices.length,
+                    itemCount: controller.activityList.length,
                     shrinkWrap: true,
-                   // reverse: true,
                     separatorBuilder: (BuildContext context, int index) => Divider(), // Add Divider between ListTiles
                     itemBuilder: (context, index) {
 
-                      final notice = controller.notices[index];
-                      // Count the number of seen and unseen users
-                      int seenCount = 0;
-                      int unseenCount = 0;
-                      if (notice.seenUsers != null) {
-                        // Count the number of seen and unseen users
-                        seenCount = notice.seenUsers!.where((user) => user.seen).length;
-                        unseenCount = notice.seenUsers!.where((user) => !user.seen).length;
-                      }
+                      final activity = controller.activityList[index];
+                      final groupActivityData = activity; // Assuming activityList contains group activity data
+                      final groupData = apiController.groupList; // Assuming groupList contains group data
 
-                     // int seenCount = notice.seenUsers!.where((user) => user.seen).length;
-                     // int unseenCount = notice.seenUsers!.where((user) => !user.seen).length;
-                      print("toato seen:$seenCount");
-                     // print("toato unseen:${notice.seenUsers!.length}");
+                      // Create a map from groupId to groupName
+                      Map<String, String> groupIdToNameMap = {};
+                      groupData.forEach((group) {
+                        groupIdToNameMap[group.id] = group.groupName;
+                      });
+
+                      // Get the groupName for the current group activity
+                      String? groupName = groupIdToNameMap[groupActivityData.groupId];
                       return ListTile(
-                        title: Row(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.10,
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                '${notice.noticeDescription}',
+
+                        title: Container(
+                          width: MediaQuery.of(context).size.width * 0.10,
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${activity.activityDetails}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.20,
-                              padding: const EdgeInsets.only(left: 100),
-                              child: Text(
-                                '${seenCount}',
+                              Text(
+                                'GroupName: ${groupName}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.20,
-                              padding: const EdgeInsets.only(left: 70),
-                              child: Text(
-                                '${unseenCount}',
+                              Text(
+                                'By : ${activity.senderName}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
-                          ],
+                              Text(
+                                'To : ${activity.receiverName}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         subtitle: Container(
                           width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: const EdgeInsets.only(left: 100),
                           child: Text(
-                            ' ${notice.noticeDeadLine.toString()}',
+                            ' ${activity.actionDate.toString()}',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 18,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         leading: Container(
-                            width: MediaQuery.of(context).size.width * 0.12,
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Row(
+                          width: MediaQuery.of(context).size.width * 0.20,
+                          padding: const EdgeInsets.only(left: 10),
+                          child: RichText(text: TextSpan(
                               children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width * 0.10,
-                                  padding: const EdgeInsets.only(left: 05),
-                                  child: Text(
-                                    '${notice.noticeTitle!}',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                TextSpan(
+                                  text: '${i++}    ',
+                                  style: TextStyle(
+                                    color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
+                                    fontSize: 18,
                                   ),
                                 ),
-                              /*  RichText(
-                                    text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: '${i++}    ',
-                                            style: TextStyle(
-                                              color: Get.isDarkMode?Colors.white:Colors.black,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: '${notice.noticeTitle!}',
-                                            style: TextStyle(
-                                              color: Get.isDarkMode?Colors.white:Colors.black,
-                                              fontSize: 18,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          // TextSpan(
-                                          //   text: ' Seen: $seenCount, Unseen: $unseenCount', // Display seen and unseen counts
-                                          //   style: TextStyle(
-                                          //     color: Get.isDarkMode?Colors.white:Colors.black,
-                                          //     fontSize: 18,
-                                          //   ),
-                                          // ),
-                                        ]
-                                    )
-                                ),*/
-                              ],
-                            )
+
+                                TextSpan(
+                                  text: '${activity.activityType!}',
+                                  style: TextStyle(
+                                    color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ]
+                          )),
                         ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete,color: Colors.red,),
-                          onPressed: () {
-                            print(notice.noticeId);
-                            print(notice.noticeDescription);
-                            // Remove the notice from the list
-                            // controller.removeNotice(notice);
-                            showDeleteConfirmationDialog(context, notice.noticeId!);
-                          },
-                        ),
+                        // trailing: IconButton(
+                        //   icon: Icon(Icons.delete,color: Colors.red,),
+                        //   onPressed: () {
+                        //     // Remove the notice from the list
+                        //     // controller.removeNotice(notice);
+                        //   //  showDeleteConfirmationDialog(context, notice.noticeId!);
+                        //   },
+                        // ),
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return NoticeDetailScreen(notice: notice);
-                            },
-                          );
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (context) {
+                          //     return NoticeDetailScreen(notice: notice);
+                          //   },
+                          // );
                         },
                       );
                     },
@@ -301,12 +267,7 @@ class NoticePage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 // Create a new notice and add it to the list
-                Notice newNotice = Notice(
-                  noticeTitle: titleController.text,
-                  noticeDescription: descriptionController.text,
-                  noticeDeadLine: selectedDate,
-                );
-                noticeController.addNotice(newNotice);
+
                 // Close the dialog
                 Get.back();
               },
@@ -319,7 +280,7 @@ class NoticePage extends StatelessWidget {
   }
 // Function to delete a department
   Future<void> deleteNotice(String noticeId) async {
-    noticeController.deleteNotice(noticeId);
+    groupActivityController.deleteNotice(noticeId);
   }
   // Function to show a confirmation dialog for deleting a department
   Future<void> showDeleteConfirmationDialog(BuildContext context, String noticeId) async {

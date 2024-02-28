@@ -130,7 +130,7 @@ class _AddName extends State<AddName> {
                       'GroupName':groupNameController.text,
                       'Creator': LocalStorage.ADMINID,
                       'SystemType':'Mobile',
-                      'Privacy':_switchValue==true?"Public":"Private"
+                     // 'Privacy':_switchValue==true?"Public":"Private"
                     };
 
                     final response = await http.post(Uri.parse('${WebApi.basesUrl}/createGroupByAdmin', ),
@@ -175,7 +175,7 @@ class _AddName extends State<AddName> {
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
           child: Column(
             children: [
-              Row(
+            /*  Row(
                 children: [
                   SizedBox(height: 80,),
                   Container(
@@ -208,7 +208,7 @@ class _AddName extends State<AddName> {
                       color: Get.isDarkMode ? Colors.white : Colors.black,
                     ),),
                 ],
-              ),
+              ),*/
               Container(
                 height: 50,
                 alignment: Alignment.center,
