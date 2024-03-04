@@ -221,15 +221,22 @@ setState(() {
             },
             child: Row(
               children: [
-                // CircleAvatar(
-                //   child: groupInfo.groupPic.startsWith('/Image') // Assuming network images start with 'http'
-                //       ? Image.network("${WebApi.basesUrl}/Image/file-Image1699078792621.jpg")
-                //       : Image.asset(groupInfo.groupPic),
-                // ),
-                CircleAvatar(
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                          color:Colors.green
+                      ),
 
-                  child: Image.network(groupInfo.groupPic),
+                      image: DecorationImage(image: NetworkImage(groupInfo.groupPic))
+                  ),
                 ),
+                // CircleAvatar(
+                //
+                //   child: Image.network(groupInfo.groupPic),
+                // ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: Container(

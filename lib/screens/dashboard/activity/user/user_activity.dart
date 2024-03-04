@@ -46,24 +46,28 @@ class UserActivityPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          SizedBox(width: Get.width*0.02,),
                           Text("SL",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 20,),
+                          SizedBox(width: Get.width*0.03,),
                           Text("Type",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
 
 
-                          SizedBox(width: 100,),
-                          Text("Description",style: TextStyle(
-                              fontSize: 20,
+                          SizedBox(width: Get.width*0.20,),
+                          Text("Activity For",style: TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-
-
+                          SizedBox(width: Get.width*0.40,),
+                          Text("Date",style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),),
                         ],
                       ),
                     ],
@@ -80,7 +84,7 @@ class UserActivityPage extends StatelessWidget {
               SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
-                height: 500,
+                height: Get.height*0.80,
                 child:Obx(() {
                   var i=1;
                   return ListView.separated(
@@ -93,56 +97,18 @@ class UserActivityPage extends StatelessWidget {
 
                       // Create a map from userId to userName
                       Map<String, String> userIdToNameMap = {};
+                      Map<String, String> senderIdToNameMap = {};
                       allUsers.forEach((user) {
                         userIdToNameMap[user.userId!] = user.userName!;
                       });
-
+                      // allUsers.forEach((user) {
+                      //   userIdToNameMap[user.senderId!] = user.userName!;
+                      // });
                       // Get senderName and receiverName using userIdToNameMap
-                      String senderName = userIdToNameMap[activity.senderId] ?? 'Unknown';
+                      String senderName = senderIdToNameMap[activity.senderId] ?? 'Admin';
                       String receiverName = userIdToNameMap[activity.receiverId] ?? 'Unknown';
 
                       return ListTile(
-                        title: Container(
-                          width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${activity.activityDetails}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Text(
-                                'Sender: $senderName',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Text(
-                                'Receiver: $receiverName',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        subtitle: Container(
-                          width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 100),
-                          child: Text(
-                            ' ${activity.actionDate.toString()}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
                         leading: Container(
                           width: MediaQuery.of(context).size.width * 0.20,
                           padding: const EdgeInsets.only(left: 10),
@@ -167,12 +133,49 @@ class UserActivityPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // trailing: IconButton(
-                        //   icon: Icon(Icons.delete, color: Colors.red),
-                        //   onPressed: () {
-                        //     // Handle delete action
-                        //   },
-                        // ),
+                        title: Container(
+                          width: MediaQuery.of(context).size.width * 0.10,
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${activity.activityDetails}',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                'Sender: $senderName',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                'Receiver: $receiverName',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+
+                        trailing: Container(
+                          width: MediaQuery.of(context).size.width * 0.10,
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            ' ${activity.actionDate.toString().substring(0,16)}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
                         onTap: () {
                           // Handle tap action
                         },

@@ -16,25 +16,10 @@ class GroupDetailModal extends StatefulWidget {
 
 class _GroupDetailModalState extends State<GroupDetailModal> {
   final ApiController apiController=Get.put(ApiController());
-  // final TextEditingController groupNameController = TextEditingController();
-  // final TextEditingController groupProfilePic = TextEditingController();
-  // final TextEditingController groupPrivacy = TextEditingController();
-  // final TextEditingController groupMembers = TextEditingController();
-  // final TextEditingController groupAdmin= TextEditingController();
-  // Add controllers for other fields as needed
-
   @override
   void initState() {
     super.initState();
 
-    // Populate controllers with existing user data if available
-    if (widget.group != null) {
-      // groupNameController.text = widget.group!.groupName ?? '';
-      // groupProfilePic.text = widget.group!.groupPic ?? '';
-      // groupPrivacy.text = widget.group!.privacy ?? '';
-      // groupMembers.text = widget.group!.membersID.toString() ?? '';
-      // groupAdmin.text = widget.group!.adminID ?? '';
-    }
   }
 
   @override
@@ -46,13 +31,14 @@ class _GroupDetailModalState extends State<GroupDetailModal> {
         borderRadius: BorderRadius.circular(16.0),
       ),
       elevation: 0.0,
-      backgroundColor: Colors.black,
+
+     // backgroundColor: Colors.black,
       child: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(16.0),
           width: MediaQuery.of(context).size.width*0.50,
           decoration: BoxDecoration(
-            color: Colors.brown,
+          //  color: Colors.cyan,
             borderRadius: BorderRadius.circular(16.0),
           ),
           child: Column(
@@ -68,44 +54,7 @@ class _GroupDetailModalState extends State<GroupDetailModal> {
                   group: widget.group,
                 ),
               ),
-              // TextField(
-              //   controller: groupNameController,
-              //   decoration: InputDecoration(labelText: 'Group Name',hintStyle: TextStyle(
-              //       color: Colors.black
-              //   )),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              // TextField(
-              //   controller: groupProfilePic,
-              //   decoration: InputDecoration(labelText: 'Group Profile'),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              // TextField(
-              //   controller: groupPrivacy,
-              //   decoration: InputDecoration(labelText: 'Privacy'),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              // TextField(
-              //   controller: groupMembers,
-              //   decoration: InputDecoration(labelText: 'Members'),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              // TextField(
-              //   controller: groupAdmin,
-              //   decoration: InputDecoration(labelText: 'Admin'),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              // Add text fields for other fields as needed
+
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {

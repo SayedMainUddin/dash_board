@@ -1,3 +1,5 @@
+import 'package:dash_board/controllers/api_controller.dart';
+import 'package:dash_board/models/MyFiles.dart';
 import 'package:dash_board/models/notice.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_description.dart';
@@ -9,8 +11,12 @@ import '../../../constants.dart';
 
 class NoticePage extends StatelessWidget {
   final NoticeController noticeController = Get.put(NoticeController());
+  final ApiController apiController=Get.put(ApiController());
+
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => ApiController());
+
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
@@ -42,30 +48,26 @@ class NoticePage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("SL",style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),),
-                          SizedBox(width: 20,),
+
                           Text("Title",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 100,),
+                          SizedBox(width: 120,),
                           Text("Description",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 100,),
+                          SizedBox(width: 120,),
 
                           Text("Seen Users",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 100,),
+                          SizedBox(width: 170,),
 
                           Text("Unseen Users",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
 
@@ -91,11 +93,10 @@ class NoticePage extends StatelessWidget {
                   return ListView.separated(
                     itemCount: controller.notices.length,
                     shrinkWrap: true,
-                   // reverse: true,
                     separatorBuilder: (BuildContext context, int index) => Divider(), // Add Divider between ListTiles
                     itemBuilder: (context, index) {
-
-                      final notice = controller.notices[index];
+                      final notice = controller.notices[controller.notices.length - index - 1];
+                      //final notice = controller.notices[index];
                       // Count the number of seen and unseen users
                       int seenCount = 0;
                       int unseenCount = 0;
@@ -160,7 +161,7 @@ class NoticePage extends StatelessWidget {
                         ),
                         leading: Container(
                             width: MediaQuery.of(context).size.width * 0.12,
-                            padding: const EdgeInsets.only(left: 10),
+                            padding: const EdgeInsets.only(left: 05),
                             child: Row(
                               children: [
                                 Container(
@@ -219,7 +220,24 @@ class NoticePage extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              return NoticeDetailScreen(notice: notice);
+                              // Check if the userList is not empty before passing it to NoticeDetailScreen
+                              if (apiController.userList.isNotEmpty) {
+                                return NoticeDetailScreen(notice: notice);
+                              } else {
+                                // Handle case where userList is empty
+                                return AlertDialog(
+                                  title: Text('User List is Empty'),
+                                  content: Text('User List is empty. Please try again later.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              }
                             },
                           );
                         },
@@ -235,6 +253,7 @@ class NoticePage extends StatelessWidget {
         );}),
     );
   }
+
 
   Future<void> _showCreateNoticeDialog(BuildContext context) async {
     TextEditingController titleController = TextEditingController();

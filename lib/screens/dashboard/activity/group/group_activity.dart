@@ -1,6 +1,7 @@
 import 'package:dash_board/constants.dart';
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/notice.dart';
+import 'package:dash_board/responsive.dart';
 import 'package:dash_board/screens/dashboard/activity/group/group_activity_controller.dart';
 import 'package:dash_board/screens/dashboard/group/group_controllers/group_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_controller.dart';
@@ -46,19 +47,36 @@ class GroupActivityPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("SL",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 20,),
+                          SizedBox(width: Get.width*0.02,),
                           Text("Type",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          SizedBox(width: Get.width*0.03,),
+                          Text("Group Name",style: TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
 
 
-                          SizedBox(width: 100,),
+                          SizedBox(width: Get.width*0.07,),
+                          Text("Activities",style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          SizedBox(width: Get.width*0.10,),
                           Text("Description",style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          !Responsive.isMobile(context)
+                              ? SizedBox(width: Get.width*0.20,):
+                          SizedBox(width: Get.width*0.03,),
+                          Text("Date",style: TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
 
@@ -87,7 +105,7 @@ class GroupActivityPage extends StatelessWidget {
                     shrinkWrap: true,
                     separatorBuilder: (BuildContext context, int index) => Divider(), // Add Divider between ListTiles
                     itemBuilder: (context, index) {
-
+                      List<Color> itemColors = [Colors.blueGrey, Colors.blue, Colors.green, Colors.teal]; // Define your list of colors here
                       final activity = controller.activityList[index];
                       final groupActivityData = activity; // Assuming activityList contains group activity data
                       final groupData = apiController.groupList; // Assuming groupList contains group data
@@ -101,86 +119,102 @@ class GroupActivityPage extends StatelessWidget {
                       // Get the groupName for the current group activity
                       String? groupName = groupIdToNameMap[groupActivityData.groupId];
                       return ListTile(
-
-                        title: Container(
-                          width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                       // tileColor: itemColors[index % itemColors.length],
+                        leading: Container(
+                          width: MediaQuery.of(context).size.width * 0.20,
+                          //  padding: const EdgeInsets.only(left: 10),
+                          child: Row(
                             children: [
-                              Text(
-                                '${activity.activityDetails}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.10,
+                                child: RichText(text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: '${i++}    ',
+                                        style: TextStyle(
+                                          color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
+                                          fontSize: 15,
+                                        ),
+                                      ),
+
+                                      TextSpan(
+                                        text: '${activity.activityType!}      ',
+                                        style: TextStyle(
+                                          color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
+                                          fontSize: 15,
+                                        ),
+                                      ),
+
+
+                                    ]
+                                )),
                               ),
-                              Text(
-                                'GroupName: ${groupName}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
+
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.10,
+                                child:  Text(
+                                  '${groupName}',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'By : ${activity.senderName}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Text(
-                                'To : ${activity.receiverName}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
+                              )
                             ],
                           ),
                         ),
-                        subtitle: Container(
-                          width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 100),
-                          child: Text(
-                            ' ${activity.actionDate.toString()}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                        title: Container(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.10,
+                                child:Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+
+                                    Text(
+                                      'By : ${activity.senderName}',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Text(
+                                      'To : ${activity.receiverName}',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+
+                             Container(
+                               width: MediaQuery.of(context).size.width * 0.25,
+                               child:  Text(
+                                 '${activity.activityDetails}',
+                                 style: TextStyle(
+                                   fontSize: 15,
+                                   overflow: TextOverflow.ellipsis,
+                                 ),
+                               ),
+                             )
+                            ],
                           ),
                         ),
-                        leading: Container(
-                          width: MediaQuery.of(context).size.width * 0.20,
-                          padding: const EdgeInsets.only(left: 10),
-                          child: RichText(text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '${i++}    ',
-                                  style: TextStyle(
-                                    color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
-                                    fontSize: 18,
-                                  ),
-                                ),
-
-                                TextSpan(
-                                  text: '${activity.activityType!}',
-                                  style: TextStyle(
-                                    color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ]
-                          )),
-                        ),
-                        // trailing: IconButton(
-                        //   icon: Icon(Icons.delete,color: Colors.red,),
-                        //   onPressed: () {
-                        //     // Remove the notice from the list
-                        //     // controller.removeNotice(notice);
-                        //   //  showDeleteConfirmationDialog(context, notice.noticeId!);
-                        //   },
-                        // ),
+                        trailing: Container(
+                      width: MediaQuery.of(context).size.width * 0.20,
+                      child: Text(
+                      ' ${activity.actionDate.toString().substring(0,20)}',
+                      style: TextStyle(
+                      fontSize: 15,
+                      overflow: TextOverflow.ellipsis,
+                      ),
+                      ),
+                      ),
                         onTap: () {
                           // showDialog(
                           //   context: context,

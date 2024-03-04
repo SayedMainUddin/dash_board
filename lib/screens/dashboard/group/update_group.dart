@@ -57,14 +57,9 @@ class _GroupDetailModalState extends State<GroupUpdateModal> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Container(
-              //   height: 200,
-              //   width: 400,
-              //   child:GroupInfoScreen(groupName: widget.group!.groupName,groupId: widget.group!.id),
-              //
-              // ),
+
               Text(
-                 'Edit Group',
+                 'Edit Group Name',
                 style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -82,30 +77,10 @@ class _GroupDetailModalState extends State<GroupUpdateModal> {
                     color: Colors.black
                 ),
               ),
+
               // TextField(
-              //   controller: groupProfilePic,
-              //   decoration: InputDecoration(labelText: 'Group Profile'),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              TextField(
-                controller: groupPrivacy,
-                decoration: InputDecoration(labelText: 'Privacy'),
-                style: TextStyle(
-                    color: Colors.black
-                ),
-              ),
-              // TextField(
-              //   controller: groupMembers,
-              //   decoration: InputDecoration(labelText: 'Members'),
-              //   style: TextStyle(
-              //       color: Colors.black
-              //   ),
-              // ),
-              // TextField(
-              //   controller: groupAdmin,
-              //   decoration: InputDecoration(labelText: 'Admin'),
+              //   controller: groupPrivacy,
+              //   decoration: InputDecoration(labelText: 'Privacy'),
               //   style: TextStyle(
               //       color: Colors.black
               //   ),

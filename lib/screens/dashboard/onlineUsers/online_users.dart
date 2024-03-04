@@ -84,11 +84,11 @@ class _UserListPageState extends State<OnlineUserList> {
                   width: 200,
                   height: 30,
                   child: SearchBar(
-                    hintText: "Search by name",
+                    hintText: "Search by any",
                     leading: Icon(Icons.search),
                     //onChanged: apiController.setSearchQuery,
                     onChanged: (String? value){
-                      apiController.getFilteredUsers(value);
+                      apiController.getFilteredOnlineUsers(value);
                     },
                   ),
                 ),
@@ -228,17 +228,15 @@ class _UserListPageState extends State<OnlineUserList> {
                 //   child: Image.network(userInfo.userImageUrl!,width: 30,height: 30),
                 // ),
                 Container(
-
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all(
                       color:Colors.green
-                    )
-                  ),
+                    ),
 
-                  child: CircleAvatar(
-
-                    child: Image.network(userInfo.userImageUrl!),
+                    image: DecorationImage(image: NetworkImage(userInfo.userImageUrl!))
                   ),
                 ),
 

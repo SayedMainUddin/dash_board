@@ -3,6 +3,7 @@ import 'package:dash_board/constants.dart';
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/ChatMessage.dart';
 import 'package:dash_board/models/Groups.dart';
+import 'package:dash_board/screens/dashboard/group/group_details.dart';
 import 'package:dash_board/screens/dashboard/group/update_group.dart';
 import 'package:dash_board/utils/local_storage.dart';
 import 'package:dash_board/utils/socket.dart';
@@ -246,17 +247,17 @@ class GroupInfoScreenState extends State<GroupInfoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
-          backgroundColor:Colors.brown,
+         // backgroundColor:Colors.cyan,
           appBar: AppBar(
-            backgroundColor: Colors.brown,
-            foregroundColor: Colors.brown,
+          //  backgroundColor: Colors.cyan,
+          //  foregroundColor: Colors.cyan,
             automaticallyImplyLeading: false,
             title: Text(
               widget.groupName!,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white
+                //color: Colors.white
               ),
             ),
             actions: [
@@ -277,9 +278,27 @@ class GroupInfoScreenState extends State<GroupInfoScreen> {
                 children: [
                   SizedBox(height: 30,),
                   ElevatedButton(
-                    child: Text('Group Details'),
+                    child: Text('Edit Details',style: TextStyle(
+                      color: Colors.white
+                    ),),
                     onPressed: () {
-                      Navigator.push(
+                    //  Navigator.pop(context);
+                   //   showgroupDetailModal(context,group: groupInfo);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return GroupDetails(
+                              groupAdmin: GroupAdmin,
+                              groupName:  grpName,
+                              groupImage: grpPic,
+                              groupId:widget.groupId,
+                              group:widget.group
+                          );
+                        },
+                      );
+
+                     // Navigator.pop(context);
+                    /*  Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => GroupDetails(
@@ -289,53 +308,76 @@ class GroupInfoScreenState extends State<GroupInfoScreen> {
                                 groupId:widget.groupId,
                                 group:widget.group
                             )),
-                      );
+                      );*/
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                         textStyle: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                        color: Colors.white)),
                   ),
 
                   SizedBox(height: 10,),
                   ElevatedButton(
-                    child: Text('Add Members'),
+                    child: Text('Add Members',style: TextStyle(
+                        color: Colors.white
+                    ),),
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ForAddMember(
-                                memberListWithoutGroup: groupMemberForExistingArray,GroupName: widget.groupName,GroupId: widget.groupId,
-                              )));
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ForAddMember(
+                            memberListWithoutGroup: groupMemberForExistingArray,GroupName: widget.groupName,GroupId: widget.groupId,
+                          );
+                        },
+                      );
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => ForAddMember(
+                      //           memberListWithoutGroup: groupMemberForExistingArray,GroupName: widget.groupName,GroupId: widget.groupId,
+                      //         )));
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                         textStyle: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
                   ),
 
                   SizedBox(height: 10,),
                   ElevatedButton(
-                    child: Text('Remove Members'),
+                    child: Text('Members',style: TextStyle(
+                        color: Colors.white
+                    ),),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MemberDetails(
-                              GroupMemberList: allGroupMember,GroupName: widget.groupName,GroupId: widget.groupId,
-                            )),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return MemberDetails(
+                            GroupMemberList: allGroupMember,GroupName: widget.groupName,GroupId: widget.groupId,
+                          );
+                        },
                       );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => MemberDetails(
+                      //         GroupMemberList: allGroupMember,GroupName: widget.groupName,GroupId: widget.groupId,
+                      //       )),
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                         textStyle: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
                   ),
                   SizedBox(height: 10,),
 
@@ -498,36 +540,56 @@ class _MemberInfoPage extends State<MemberDetails> {
 //addMemeberToExistGroupSuccess
     // socket.emit('removeMemberFromGroup', TestChat.selectedUserID + "ID:" + id + "Name:" + memberName + "OwnID:" + ADMINNAME);
   }
+  showAlerDialog(String? userId,String? userName,index) {
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        removeFromGroup(userId,userName);
+        if (mounted) {
+          setState(() {
+            allGroupMember!.removeAt(index);
+          });
+        }
+        Get.back();
+      },
+    );
+    Widget okButton2 = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Get.back();
+        //  apiController.getAllDepartments();
+      },
+    );
+    // configura o  AlertDialog
+    Get.defaultDialog(
+        title: "Are you sure?",
+        middleText: "Do you want to remove this user?",
+        backgroundColor: Colors.amber,
+        titleStyle: TextStyle(color: Colors.white),
+        middleTextStyle: TextStyle(color: Colors.white),
+        radius: 30,
+        actions: [
+          okButton,
+          okButton2
+        ]
+    );
+  }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return   AlertDialog(
+
+    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 24), // Adjust padding as needed
+    content: SizedBox(
+    width: Get.width*0.50, // Adjust width as needed
+    height: Get.height*0.60,
         child: Scaffold(
           backgroundColor:Get.isDarkMode?Colors.black: Color(0xfff4f4f9),
           appBar: AppBar(
             backgroundColor: Get.isDarkMode?Colors.black:Colors.white,
             foregroundColor: Get.isDarkMode?Colors.white:Colors.black,
             elevation: 0,
-            leading: InkWell(
-              child: Icon(
-                Icons.arrow_back,
-                size: 26,
-              ),
-              onTap: () {
+            automaticallyImplyLeading: false,
 
-                Navigator.pop(context);
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (_) =>
-                //             GroupInfoScreen(
-                //               groupName:
-                //               widget.GroupName,
-                //               groupId: widget.GroupId,)
-                //     )
-                // );
-
-              },
-            ),
             title: Text(
               "Group Members",
               style: TextStyle(
@@ -535,6 +597,20 @@ class _MemberInfoPage extends State<MemberDetails> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            actions: [
+              InkWell(
+                child: Icon(
+                  Icons.highlight_remove,
+                  color: Colors.red,
+                  size: 26,
+                ),
+                onTap: () {
+
+                  Navigator.pop(context);
+
+                },
+              )
+            ],
 
           ),
           body: Container(
@@ -577,30 +653,7 @@ class _MemberInfoPage extends State<MemberDetails> {
                                   height: 46,
                                   child: Stack(
                                     children: <Widget>[
-                                      /*Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(18.0),
-                                              bottomRight: Radius.circular(18.0),
-                                              bottomLeft: Radius.circular(18.0),
-                                              topLeft: Radius.circular(18.0),
-                                            ),
-                                            shape: BoxShape.rectangle,
-                                            border:
-                                            Border.all(color: Colors.blueAccent, width: 3)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(3.0),
-                                          child: Container(
-                                            width: 55,
-                                            height: 55,
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                image: DecorationImage(
-                                                    image: NetworkImage(allGroupMember![index].imageUrl!),
-                                                    fit: BoxFit.cover)),
-                                          ),
-                                        ),
-                                      ),*/
+
                                       Container(
                                         width: 45,
                                         height: 45,
@@ -626,7 +679,7 @@ class _MemberInfoPage extends State<MemberDetails> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.50,
+                                      width: MediaQuery.of(context).size.width * 0.30,
                                       child: Text(
                                         allGroupMember![index].name!,
                                         //  conversationList[index]['time'],
@@ -667,12 +720,8 @@ class _MemberInfoPage extends State<MemberDetails> {
                                             child:
                                             Icon(Icons.remove_circle,color: Colors.red,)),
                                         onTap: () {
-                                          removeFromGroup(allGroupMember![index].uniqueId,allGroupMember![index].name);
-                                          if (mounted) {
-                                            setState(() {
-                                              allGroupMember!.removeAt(index);
-                                            });
-                                          }
+                                          showAlerDialog(allGroupMember![index].uniqueId,allGroupMember![index].name,index);
+
                                         },
                                       ),
                                     ):Container(
@@ -697,17 +746,9 @@ class _MemberInfoPage extends State<MemberDetails> {
               ],
             ),
           ),
-        ), onWillPop: () async{
-      Navigator.pop(context);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) =>
-                  GroupInfoScreen(
-                      groupName:
-                      widget.GroupName)));
-      return true;
-    });
+        )
+    )
+    );
   }
 }
 class ForAddMember extends StatefulWidget {
@@ -756,30 +797,54 @@ class _ForAddMember extends State<ForAddMember> {
     //  socket.emit('addToExistGroup', TestChat.selectedUserID + "ID:" + id + "Name:" + memberName + "OwnID:" + ADMINNAME);
   }
   bool isAddButtonClick = true;
+  showAlerDialog(String? userId,String? userName,index) {
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        AddMemberToExistGroup(userName,userId);
+        if (mounted) {
+          setState(() {
+            groupMemberForExistingArray!.removeAt(index);
+          });
+        }
+        Get.back();
+      },
+    );
+    Widget okButton2 = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Get.back();
+        //  apiController.getAllDepartments();
+      },
+    );
+    // configura o  AlertDialog
+    Get.defaultDialog(
+        title: "Are you sure?",
+        middleText: "Do you want to remove this user?",
+        backgroundColor: Colors.amber,
+        titleStyle: TextStyle(color: Colors.white),
+        middleTextStyle: TextStyle(color: Colors.white),
+        radius: 30,
+        actions: [
+          okButton,
+          okButton2
+        ]
+    );
+  }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(child: Scaffold(
+    return   AlertDialog(
+       // title: Text('Add member'),
+    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 24), // Adjust padding as needed
+    content: SizedBox(
+    width: Get.width*0.50, // Adjust width as needed
+    height: Get.height*0.60,
+        child: Scaffold(
       backgroundColor:Get.isDarkMode?Colors.black: Color(0xfff4f4f9),
       appBar: AppBar(
         backgroundColor: Get.isDarkMode?Colors.black:Colors.white,
         foregroundColor: Get.isDarkMode?Colors.white:Colors.black,
-        leading: InkWell(
-          child: Icon(
-            Icons.arrow_back,
-            size: 26,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (_) =>
-            //             GroupInfoScreen(
-            //               groupName:
-            //               widget.GroupName,groupId: widget.GroupId,)));
-
-          },
-        ),
+        automaticallyImplyLeading: false,
         title: Text(
           "Add Members",
           style: TextStyle(
@@ -787,17 +852,26 @@ class _ForAddMember extends State<ForAddMember> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        //   actions: [
-        //     TextButton(
-        //       onPressed: (){
-        //         Navigator.push(
-        //           context,
-        //           MaterialPageRoute(builder: (context) => ChatScreen(groupMemberList: widget.groupMemberList,)),
-        //         );
-        //       },
-        //       child: Icon(Icons.more_vert_outlined),
-        //     )
-        //   ],
+          actions: [
+            InkWell(
+              child: Icon(
+                Icons.highlight_remove_rounded,
+                color: Colors.red,
+                size: 26,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (_) =>
+                //             GroupInfoScreen(
+                //               groupName:
+                //               widget.GroupName,groupId: widget.GroupId,)));
+
+              },
+            ),
+          ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -807,7 +881,7 @@ class _ForAddMember extends State<ForAddMember> {
               alignment: Alignment.topLeft,
               margin: EdgeInsets.symmetric(vertical: 15),
               child: Text(
-                "${groupMemberForExistingArray!.length} Participants",
+                "${groupMemberForExistingArray!.length} Members left",
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -850,25 +924,7 @@ class _ForAddMember extends State<ForAddMember> {
                                             image: NetworkImage(groupMemberForExistingArray![index].imageUrl!),
                                             fit: BoxFit.cover)),
                                   ),
-                                  Positioned(
-                                    top: 35,
-                                    left: 35,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0),
-                                            topLeft: Radius.circular(10.0),
-                                          ),
-                                          color: Color(0xFF66BB6A),
-                                          shape: BoxShape.rectangle,
-                                          border:
-                                          Border.all(color: Color(0xFFFFFFFF), width: 3)),
-                                    ),
-                                  ),
+
                                   Container()
                                 ],
                               ),
@@ -880,7 +936,7 @@ class _ForAddMember extends State<ForAddMember> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.50,
+                                  width: MediaQuery.of(context).size.width * 0.30,
                                   child: Text(
                                     groupMemberForExistingArray![index].name!,
                                     //  conversationList[index]['time'],
@@ -900,13 +956,8 @@ class _ForAddMember extends State<ForAddMember> {
                                         : Icon(Icons.remove_circle)),
                                 onTap: () {
                                   print('add button clicked');
-                                  AddMemberToExistGroup(groupMemberForExistingArray![index].name,groupMemberForExistingArray![index].uniqueId);
+                                  showAlerDialog(groupMemberForExistingArray![index].name,groupMemberForExistingArray![index].uniqueId,index);
 
-                                  if (mounted) {
-                                    setState(() {
-                                      groupMemberForExistingArray!.removeAt(index);
-                                    });
-                                  }
 
                                 },
                               ),
@@ -922,17 +973,8 @@ class _ForAddMember extends State<ForAddMember> {
           ],
         ),
       ),
-    ), onWillPop: () async{
-      Navigator.pop(context);
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (_) =>
-      //             GroupInfoScreen(
-      //                 groupName:
-      //                 widget.GroupName)));
-      return true;
-    });
+    ),)
+    );
   }
 }
 
@@ -1302,150 +1344,137 @@ var header={'Authorization': 'Bearer ${LocalStorage.BearerTOKEN}'};
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:Get.isDarkMode?Colors.black: Color(0xfff4f4f9),
-      appBar: AppBar(
-        backgroundColor: Get.isDarkMode?Colors.black:Colors.white,
-        foregroundColor: Get.isDarkMode?Colors.white:Colors.black,
+    return   AlertDialog(
 
-        title: Text('Group Details'),
-        actions: [
-          IconButton(
-            color: Colors.teal,
-              padding: EdgeInsets.all(20),
-              onPressed: (){
+    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 24), // Adjust padding as needed
+    content: SizedBox(
+    width: Get.width*0.50, // Adjust width as needed
+    height: Get.height*0.60,
+      child: Scaffold(
+        backgroundColor:Get.isDarkMode?Colors.black: Color(0xfff4f4f9),
 
-            showgroupUpdateModal(context,group:widget.group);
+        body: Column(
+          children: [
 
-          }, icon: Row(
-            children: [
-              Text('Edit'),
-              Icon(Icons.edit),
-            ],
-          ))
-        ],
-      ),
-      body: Column(
-        children: [
-          Container(
-            height: 20,
-          ),
-          Container(
-            // height: 70.0,
-            margin: EdgeInsets.only(bottom: 1.0),
-            padding: EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(0.0),
-              color: Get.isDarkMode? Colors.black:Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: Offset(0.0, 1.0),
-                  blurRadius: 1.0,
-                ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(),
+                Text('Edit Name and Image',
+                style: TextStyle(
+                  fontSize: 17,
+                //  color: Colors.green
+                ),),
+                IconButton(
+                    color: Colors.red,
+                    padding: EdgeInsets.all(20),
+                    onPressed: (){
+                      Navigator.pop(context);
+                     // showgroupUpdateModal(context,group:widget.group);
+
+                    }, icon:   Icon(Icons.highlight_remove_rounded,color: Colors.red,),),
               ],
             ),
-            child: Stack(
-              children: [
+            Container(
+              // height: 70.0,
+              margin: EdgeInsets.only(bottom: 1.0),
+              padding: EdgeInsets.only(top: 10),
+              alignment: Alignment.center,
 
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Column(
+              child: Stack(
+                children: [
+                  Column(
                     children: [
 
-                      Column(
-                        children: [
-                          Container(
-                            height: 200,
-                            width: 200,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  topRight: Radius.circular(50),
-                                  bottomLeft: Radius.circular(50),
-                                  bottomRight: Radius.circular(50)),
-                              image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage(widget.groupImage),
-                              ),
-                            ),child: Container(
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(50),
+                              bottomLeft: Radius.circular(50),
+                              bottomRight: Radius.circular(50)),
+                          image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: NetworkImage(widget.groupImage),
+                          ),
+                        ),child: Container(
 
-                            alignment: Alignment.bottomRight,
-                            height: 40,
-                            width: 40,
-                            child:Container(
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                    bottomLeft: Radius.circular(20),
-                                    bottomRight: Radius.circular(20)),
-                              ),
-
-                              child:  IconButton(
-                                onPressed: (){
-                                  showChoiceDialog(context);
-                                  //profilePicChange();
-                                },
-                                icon: Icon(Icons.camera_alt_outlined,color: Colors.white,size: 20,),
-                              ),
-                            ),
-
+                        alignment: Alignment.bottomRight,
+                        height: 40,
+                        width: 40,
+                        child:Container(
+                          decoration: BoxDecoration(
+                            color: Colors.deepPurple,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20)),
                           ),
 
+                          child:  IconButton(
+                            onPressed: (){
+                              showChoiceDialog(context);
+                              //profilePicChange();
+                            },
+                            icon: Icon(Icons.camera_alt_outlined,color: Colors.white,size: 20,),
                           ),
+                        ),
 
-                        ],
                       ),
 
-
-
-
-
+                      ),
                       Container(
-                        margin: EdgeInsets.only(top: 8,bottom: 10),
+
                         child: InkWell(
                           onTap: (){
+                            showgroupUpdateModal(context,group:widget.group);
 
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
-                                width: 300,
-                                alignment: Alignment.center,
+                                width: Get.width*0.30,
+
                                 child: Text(
                                   widget.groupName,
                                   style: TextStyle(
                                       color:Get.isDarkMode? Colors.white:Colors.black,
-                                      fontSize: 22,
+                                      fontSize: 18,
                                       letterSpacing: 2,
                                       fontWeight: FontWeight.bold
                                   ),
                                 ),
                               ),
+                              IconButton(onPressed: (){
+                                showgroupUpdateModal(context,group:widget.group);
+                              }, icon: Icon(Icons.edit,
+                              color: Colors.green,))
                             ],
                           ),
                         ),
                       ),
+
+
                     ],
                   ),
-                ),
 
 
 
-              ],
+                ],
+              ),
             ),
-          ),
-          // CircleAvatar(
-          //   radius: 100,
-          //   child: Image.network(widget.groupImage),
-          // ),
-          //  IconButton(onPressed: (){}, icon: Icon(Icons.image)),
-          /* Container(
+            // CircleAvatar(
+            //   radius: 100,
+            //   child: Image.network(widget.groupImage),
+            // ),
+            //  IconButton(onPressed: (){}, icon: Icon(Icons.image)),
+            /* Container(
 
             padding: EdgeInsets.all(20),
             alignment: Alignment.center,
@@ -1469,30 +1498,10 @@ var header={'Authorization': 'Bearer ${LocalStorage.BearerTOKEN}'};
               ],
             ),
           ),*/
-          Container(
-
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Admin Name",style: TextStyle(
-                    fontSize: 22
-                ),),
-                Text(":",style: TextStyle(
-                    fontSize: 22
-                ),),
-                Container(
-                  width: MediaQuery.of(context).size.width*0.40,
-                  child: Text(widget.groupAdmin,style: TextStyle(
-                      fontSize: 22,
-                      overflow: TextOverflow.ellipsis
-                  ),),
-                ),
-              ],
-            ),
-          )
-        ],
+          ],
+        ),
       ),
-    );
+    ));
+
   }
 }

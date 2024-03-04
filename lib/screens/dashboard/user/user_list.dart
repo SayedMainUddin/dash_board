@@ -53,6 +53,18 @@ class _UserListPageState extends State<UserListPage> {
     _fetchGroupData();
 
   }
+  List<String> sortingOptions = [
+    'Sorting',
+    'Department',
+    'Time',
+    'DOB',
+    'Name',
+    'Email',
+    'Mobile',
+  ];
+
+  String selectedSortingOption = 'Sorting';
+  bool isAscending = true;
 
   Future<void> _fetchUserData() async {
 
@@ -61,6 +73,42 @@ class _UserListPageState extends State<UserListPage> {
 
     });
   }
+  void _sortUserList() {
+    apiController.userList.sort((a, b) {
+      switch (selectedSortingOption) {
+        case 'Department':
+          return isAscending
+              ? a.userDepartment!.compareTo(b.userDepartment!)
+              : b.userDepartment!.compareTo(a.userDepartment!);
+        case 'Time':
+          return isAscending
+              ? a.time!.compareTo(b.time!)
+              : b.time!.compareTo(a.time!);
+          break;
+        case 'DOB':
+          return isAscending
+              ? a.dob!.compareTo(b.dob!)
+              : b.dob!.compareTo(a.dob!);
+          break;
+        case 'Name':
+          return isAscending
+              ? a.userName!.compareTo(b.userName!)
+              : b.userName!.compareTo(a.userName!);
+          break;
+        case 'Email':
+          return isAscending
+              ? a.email!.compareTo(b.email!)
+              : b.email!.compareTo(a.email!);
+        case 'Mobile':
+          return isAscending
+              ? a.mobile!.compareTo(b.mobile!)
+              : b.mobile!.compareTo(a.mobile!);
+          break;
+      }
+      return 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -89,15 +137,27 @@ class _UserListPageState extends State<UserListPage> {
                   }, icon: Icon(Icons.refresh))
                 ],
               ),
-              Container(
+              !Responsive.isMobile(context)? Container(
                 width: 250,
                 height: 30,
                 child: SearchBar(
-                 hintText: "Search user by any field",
+                 hintText: "Search user by any",
                   leading: Icon(Icons.search),
+
                   //onChanged: apiController.setSearchQuery,
                   onChanged: (String? value){
                    apiController.getFilteredUsers(value);
+                  },
+                ),
+              ):Container(
+                width: 50,
+                height: 20,
+                child: SearchBar(
+                  hintText: "Search user by any",
+                  leading: Icon(Icons.search),
+                  //onChanged: apiController.setSearchQuery,
+                  onChanged: (String? value){
+                    apiController.getFilteredUsers(value);
                   },
                 ),
               ),
@@ -133,7 +193,41 @@ class _UserListPageState extends State<UserListPage> {
                 icon: Icon(Icons.add),
                 label: Text("Create User"),
               ),
+              !Responsive.isMobile(context)?  Container(
+                margin: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.white)
+                ),
+                child: DropdownButton(
+                  value: selectedSortingOption,
+                  hint: Text('Sorting'),
+                  borderRadius: BorderRadius.circular(15),
+                  items: sortingOptions
+                      .map((option) => DropdownMenuItem(
+                    value: option,
+                    child: Text(option),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedSortingOption = value.toString();
+                      _sortUserList();
+                    });
+                  },
+                ),
+              ):Container(),
 
+              !Responsive.isMobile(context)? IconButton(
+                icon: Icon(Icons.sort),
+                onPressed: () {
+                  setState(() {
+                    isAscending = !isAscending;
+                    _sortUserList();
+                  });
+                },
+              ):Container(),
             ],
           ),
           SizedBox(
@@ -142,23 +236,6 @@ class _UserListPageState extends State<UserListPage> {
               columnSpacing: defaultPadding,
               // minWidth: 600,
               columns: [
-                /*  DataColumn(
-                  label: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: Checkbox(
-                      value: selectedUsers.length == userList.length,
-                      onChanged: (selected) {
-                        // Handle "Select All" checkbox change here
-                        setState(() {
-                          selectedUsers.forEach((user) {
-                            user.isSelected = selected ?? false;
-                          });
-                        });
-                      },
-                    ),
-                  ),
-                ),*/
 
                 DataColumn(
                   label: Text("User"),
@@ -174,7 +251,7 @@ class _UserListPageState extends State<UserListPage> {
                   label: Text(""),
                 ),
                 !Responsive.isMobile(context)?    DataColumn(
-                  label: Text("Created Date"),
+                  label: Text("Department"),
                 ):DataColumn(
                   label: Text(""),
                 ),
@@ -227,25 +304,19 @@ class _UserListPageState extends State<UserListPage> {
             },
             child: Row(
               children: [
-                // CircleAvatar(
-                //   child: Image.asset(userInfo.userImageUrl!),
-                // ),
-                // Container(
-                //
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(50),
-                //     border: Border.all(
-                //       color: userInfo.isOnline=="true"?Colors.green:Colors.transparent
-                //     )
-                //   ),
-                //   width: 100,
-                //   height: 100,
-                //   child: Image.network(userInfo.userImageUrl!),
-                // ),
-                CircleAvatar(
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                          color:Colors.green
+                      ),
 
-                  child: Image.network(userInfo.userImageUrl!),
+                      image: DecorationImage(image: NetworkImage(userInfo.userImageUrl!))
+                  ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: Text(userInfo.userName!,overflow: TextOverflow.ellipsis,style:
@@ -265,7 +336,7 @@ class _UserListPageState extends State<UserListPage> {
             ? DataCell(Text(userInfo.mobile!))
             : DataCell(Text("")),
         !Responsive.isMobile(context)
-            ? DataCell(Text(userInfo.time!))
+            ? DataCell(Text(userInfo.userDepartment!))
             : DataCell(Text("")),
         DataCell(
           Row(

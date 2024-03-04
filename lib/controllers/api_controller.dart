@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 
 class ApiController extends GetxController {
   final userList=<User>[].obs;
+  final everyUserWithAdmin=<User>[].obs;
   final departmentList=<Department>[].obs;
   final mutedUserList=<User>[].obs;
   final onlineUserList=<User>[].obs;
@@ -39,11 +40,32 @@ class ApiController extends GetxController {
         user.email!.toLowerCase().contains(query)||
         user.mobile!.toLowerCase().contains(query)||
         user.time!.toLowerCase().contains(query)||
-        user.dob!.toLowerCase().contains(query)
+        user.dob!.toLowerCase().contains(query)||
+        user.userDepartment!.toLowerCase().contains(query)
 
     )
         .toList();
     userList.value=newUser;
+    if(value==''){
+      fetchUsers({"AdminId": LocalStorage.ADMINID});
+    }
+  }
+  getFilteredOnlineUsers(value) {
+    print(onlineUserList.length);
+    List<User> newUser=onlineUserList;
+    final query = value.toLowerCase();
+    newUser= onlineUserList
+        .where((user) =>
+    user.userName!.toLowerCase().contains(query) ||
+        user.email!.toLowerCase().contains(query)||
+        user.mobile!.toLowerCase().contains(query)||
+        user.time!.toLowerCase().contains(query)||
+        user.dob!.toLowerCase().contains(query)||
+        user.userDepartment!.toLowerCase().contains(query)
+
+    )
+        .toList();
+    onlineUserList.value=newUser;
     if(value==''){
       fetchUsers({"AdminId": LocalStorage.ADMINID});
     }
@@ -211,7 +233,7 @@ class ApiController extends GetxController {
     //  userList.removeAt(index)
       print('User account deleted!');
       toggleSuccess(context,"User has been deleted successfully!");
-      fetchUsers({"AdminId": "6545cc78434c8b5bd35c9133"});
+      fetchUsers({"AdminId": LocalStorage.ADMINID});
       Get.to(()=>MyApp());
 
 
@@ -221,6 +243,7 @@ class ApiController extends GetxController {
     update();
   }
    fetchUsers(Map<String, dynamic> data) async {
+
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/allUserforControllbyadmin'),
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -232,7 +255,7 @@ class ApiController extends GetxController {
 
     if (response.statusCode == 200) {
       final List<dynamic> userDataList = json.decode(response.body);
-   //  print('total users from api:$userDataList');
+   // print('total users from api:$userDataList');
       // var userId,userName,userAddress;
       // for(var i=0;userDataList.length>i;i++){
       //   final User currentUser=User(
