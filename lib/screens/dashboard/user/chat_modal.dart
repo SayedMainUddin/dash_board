@@ -196,7 +196,8 @@ class _ChatModalState extends State<ChatModal> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 13,
-                        color: Colors.black
+                      color:Get.isDarkMode? Colors.white:Colors.black,
+
                     ),
                   ),
                 ),
@@ -243,11 +244,12 @@ class _ChatModalState extends State<ChatModal> {
     }
   }
   Future<void> sendFileToServer() async {
+
     if (selectedFileResult != null) {
       var fileList = selectedFileResult!.files;
 
       for (var file in fileList) {
-        if (file.size! > 26214400) {
+        if (file.size > 26214400) {
           showAlerDialog(
             "Overflow!",
             "File Size is too large. Max file size is 25 MB",
@@ -289,13 +291,15 @@ class _ChatModalState extends State<ChatModal> {
 
             setState(() {
               isSentFile=false;
-              fileBytes=null;
-            });
 
+            });
+         // Get.back();
           //   Get.back();
           //  toggleSuccess(context, "File sent successfully!");
         }
       }
+    }else{
+     Get.back();
     }
   }
   Future<void> sendImageToServer() async {
@@ -343,9 +347,9 @@ class _ChatModalState extends State<ChatModal> {
 
             setState(() {
               isSentImage=false;
-              fileBytes=null;
-            });
 
+            });
+          //Get.back();
        //   Get.back();
         //  toggleSuccess(context, "File sent successfully!");
         }
@@ -430,7 +434,6 @@ class _ChatModalState extends State<ChatModal> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-
     qualityController.dispose();
     socketController.socket.off("loadAllChat");
     socketController.socket.off("loadData");
@@ -449,11 +452,10 @@ class _ChatModalState extends State<ChatModal> {
         padding: EdgeInsets.all(16.0),
         width: MediaQuery.of(context).size.width*0.40,
         height: MediaQuery.of(context).size.width*0.40,
-      //  height:          _imageFileList!.length>0 ?MediaQuery.of(context).size.height*0.70: MediaQuery.of(context).size.height*0.40,
-
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:Get.isDarkMode?Colors.black: Colors.white,
           borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(color: Get.isDarkMode?Colors.white:Colors.black)
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -469,14 +471,17 @@ class _ChatModalState extends State<ChatModal> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black
+                    color:Get.isDarkMode? Colors.white:Colors.black,
+
                   ),
                 ),
                 IconButton(onPressed: (){
                  //Get.to(()=>MyApp());
                   Navigator.pop(Get.context!);
                   userChatController.dataProcessed.value=false;
-                }, icon: Icon(Icons.disabled_by_default_outlined))
+                }, icon: Icon(Icons.disabled_by_default_outlined,
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+                ))
               ],
             ),
             Row(
@@ -533,7 +538,7 @@ class _ChatModalState extends State<ChatModal> {
                   child: SfPdfViewer.memory(
                       fileBytes!),
                 ),
-            Row(
+                Row(
               children: [
                 IconButton(
                   icon: Icon(Icons.attach_file,color: Colors.teal,),
@@ -552,7 +557,8 @@ class _ChatModalState extends State<ChatModal> {
                    //    context: context,);
                   },
                 ),
-                fileBytes != null?
+                isSentFile||isSentImage?
+              //  fileBytes != null?
                 Expanded(
                   child: Text("Send file to user",
                   style: TextStyle(
@@ -560,20 +566,36 @@ class _ChatModalState extends State<ChatModal> {
                   ),)
                 ):
                 Expanded(
-                  child: TextField(
-                    controller: messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type your message...',
-                      hintStyle: TextStyle(
-                          color: Colors.black45
+                  child: RawKeyboardListener(
+                    focusNode: FocusNode(), // Ensure that this widget has focus
+                    onKey: (RawKeyEvent event) {
+                      if (event is RawKeyDownEvent) {
+                        if (event.logicalKey == LogicalKeyboardKey.enter) {
+                          // Handle Enter key press here
+                          sendMessage();
+                        }
+                      }
+                    },
+                    child: TextField(
+                      maxLines: 5,
+                      minLines: 1,
+                      controller: messageController,
+                      decoration: InputDecoration(
+                        hintText: 'Type your message...',
+                        hintStyle: TextStyle(
+                          color:Get.isDarkMode? Colors.white:Colors.black45,
+
+                        ),
+                      ),
+                      style: TextStyle(
+                        color:Get.isDarkMode? Colors.white:Colors.black,
+
                       ),
                     ),
-                    style: TextStyle(
-                        color: Colors.black
-                    ),
                   ),
+
                 ),
-                fileBytes != null?
+                isSentFile==true||isSentImage==true?
                 IconButton(
                   icon: Icon(Icons.send,color: Colors.teal,),
                   onPressed: () {
@@ -607,16 +629,10 @@ class _ChatModalState extends State<ChatModal> {
     if (message.isNotEmpty) {
       setState(() {
         messages.add(ChatMessage(message: message, isSentByUser: true));
-        // Add logic to send the message to the admin or perform any desired action
       });
-
-   //   messageController.clear();
     }
   }
 }
-
-
-
 
 void showChatModal(BuildContext context, String receiverName,String receiverId,String receiverType ) {
   showDialog(

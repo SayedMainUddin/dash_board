@@ -22,6 +22,8 @@ class ApiController extends GetxController {
   final mutedUserList=<User>[].obs;
   final onlineUserList=<User>[].obs;
   final groupList=<Group>[].obs;
+  final userInGroupList=<Group>[].obs;
+
   final mode="Light".obs;
   var onlineusername = "name";
   var onlineNameList = [].obs;
@@ -41,6 +43,7 @@ class ApiController extends GetxController {
         user.mobile!.toLowerCase().contains(query)||
         user.time!.toLowerCase().contains(query)||
         user.dob!.toLowerCase().contains(query)||
+        user.status!.toLowerCase().contains(query)||
         user.userDepartment!.toLowerCase().contains(query)
 
     )
@@ -76,7 +79,7 @@ class ApiController extends GetxController {
     final query = value.toLowerCase();
     newUser= groupList
         .where((user) =>
-    user.groupName.toLowerCase().contains(query))
+    user.groupName.toLowerCase().contains(query)||user.dateTime.contains(query))
         .toList();
     groupList.value=newUser;
     if(value==''){
@@ -101,6 +104,7 @@ class ApiController extends GetxController {
       );
     if (response.statusCode == 201) {
       getAllDepartments();
+      update();
         return  showAlerDialog("Congratulations!", "Department has been created successfully!");
 
       }else if(response.statusCode==400){
@@ -110,11 +114,12 @@ class ApiController extends GetxController {
         print('Error creating department: ${response.statusCode}');
         return {'error': 'Failed to create department'};
       }
+
     } catch (e) {
       print('Exception creating department: $e');
       return {'error': 'Exception occurred'};
     }
-    update();
+
   }
   ///get all departments
   Future<List<Department>> getAllDepartments() async {
@@ -340,6 +345,18 @@ class ApiController extends GetxController {
     }
     update();
   }
+   findUserGroups(String userId) {
+     print(userId);
+     userInGroupList.value=[];
+  //  List<Map<String, dynamic>> userGroups = [];
+    for (var group in groupList) {
+      if (group.membersID.contains(userId)) {
+        userInGroupList.add(group);
+      }
+    }
+    update();
+  }
+
   Future<void> muteUser(BuildContext context,Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/MuteUnMuteAccountPermanentByAdmin'),
       headers: {
@@ -391,7 +408,7 @@ class ApiController extends GetxController {
 
     if (response.statusCode == 200) {
       final List<dynamic> groupDataList = json.decode(response.body);
-   //   print('total users from api:$groupDataList');
+    // print('total users from api:$groupDataList');
 
       List<Group> currentGroupList = groupDataList.map((groupData) {
         return Group(
@@ -401,7 +418,7 @@ class ApiController extends GetxController {
           groupPic: groupData['GroupPic']==null||groupData['GroupPic']==''?"assets/images/group.png":"${WebApi.basesUrl}${groupData['GroupPic'].toString().substring(2)}",
           membersID: groupData['MembersID']??[],
           privacy: groupData['Privacy']??"",
-          dateTime: groupData['DateTime']??""
+          dateTime: groupData['DatetTime']??""
           // Add other properties as needed
         );
       }).toList();
@@ -453,7 +470,6 @@ class ApiController extends GetxController {
     }
     update();
   }
-
   Future<void> deleteGroup(BuildContext context,Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/deleteGroupByAdmin'),
       headers: {

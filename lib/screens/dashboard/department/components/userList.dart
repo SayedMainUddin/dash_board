@@ -55,8 +55,8 @@ class _UserListPopupState extends State<UserListPopup> {
             Text('Select a user:'),
             SingleChildScrollView(
               child:  Container(
-                  width: 400,
-                  height: 300,
+                  width: Get.width*0.40,
+                  height: Get.height*0.40,
                   child:  Obx(() => ListView.builder(
                     itemCount: filteredUsers.length,
                     shrinkWrap: true,
@@ -196,6 +196,7 @@ class DepartmentListTable extends StatelessWidget {
                   title: Text(user.userName ?? ''),
                   subtitle: Text(user.email??''),
                   trailing: Text(user.mobile??''),
+                  horizontalTitleGap: 1,
                 ),
             ],
           ),
@@ -232,12 +233,13 @@ class DepartmentListTable extends StatelessWidget {
     departmentCounts.forEach((department, count) {
       print('Department: $department, User Count: $count');
     });
-    return  SizedBox( width: double.infinity,
+    return  SizedBox(
+        width: double.infinity,
         child: DataTable(
 
           columns: [
             DataColumn(label: Text('Department')),
-            DataColumn(label: Text('Department Head')),
+            DataColumn(label: Text('Head')),
             DataColumn(label: Text('Users')),
             DataColumn(label: Text('Action')),
           ],
@@ -259,12 +261,10 @@ class DepartmentListTable extends StatelessWidget {
                     Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.edit),
+                          icon: Icon(Icons.edit,color: Colors.green,),
                           onPressed: () async {
                             // Fetch the user list (replace this with your logic to fetch the user list)
                             await   apiController.fetchUsers({"AdminId": LocalStorage.ADMINID});
-                            // Show the popup
-                            // await UserListPopup( userList: apiController.userList);
                             await showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -274,10 +274,9 @@ class DepartmentListTable extends StatelessWidget {
                           },
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: Icon(Icons.delete,
+                          color: Colors.red,),
                           onPressed: () {
-                            // Handle delete button tap
-                            // Implement the logic to delete the department
                             showDeleteConfirmationDialog(context, department.id);
                           },
                         ),

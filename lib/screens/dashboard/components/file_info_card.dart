@@ -21,7 +21,7 @@ class FileInfoCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(defaultPadding),
         decoration: BoxDecoration(
-          color: secondaryColor,
+          color: Color(0xff1B3F4BFF),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
         child: Column(
@@ -39,13 +39,13 @@ class FileInfoCard extends StatelessWidget {
                     height: 70,
                     width: 60,
                     decoration: BoxDecoration(
-                      color: Get.isDarkMode?Colors.white:Colors.white,
+                      color: Get.isDarkMode?Colors.white:Colors.grey,
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     alignment: Alignment.center,
                     child: Icon(
                         Icons.people_outline,
-                        color: Get.isDarkMode?Colors.black:Colors.black
+                        color: Get.isDarkMode?Colors.black:Colors.white
                     )
                 ),
                 //  Icon(Icons.more_vert, color: Colors.white54)
@@ -54,29 +54,20 @@ class FileInfoCard extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "${title} : ",
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 22,
-                      color: Get.isDarkMode?Colors.white:Colors.white
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-
-
-
-              ],
+            Text(
+              "${title} : ",
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 22,
+                  color: Get.isDarkMode?Colors.white:Colors.black54
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               "${info.toString()}",
               style: TextStyle(
-                  color: Get.isDarkMode?Colors.white:Colors.white,
+                  color: Get.isDarkMode?Colors.white:Colors.black,
                   fontSize: 22
               ),
             ),

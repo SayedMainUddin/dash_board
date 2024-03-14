@@ -55,8 +55,13 @@ class _UserDetailModalState extends State<UserEditModal> {
           padding: EdgeInsets.all(16.0),
           width: MediaQuery.of(context).size.width*0.40,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:Get.isDarkMode? Colors.black:Colors.white,
+
             borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(
+              color:Get.isDarkMode? Colors.white:Colors.black,
+
+            )
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -70,12 +75,15 @@ class _UserDetailModalState extends State<UserEditModal> {
                     style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black
+                      color:Get.isDarkMode? Colors.white:Colors.black,
+
                     ),
                   ),
                   IconButton(onPressed: (){
                     Get.back();
-                  }, icon: Icon(Icons.close))
+                  }, icon: Icon(Icons.close,
+                    color:Get.isDarkMode? Colors.white:Colors.black,
+                  ))
                 ],
               ),
               SizedBox(height: 16.0),
@@ -91,15 +99,18 @@ class _UserDetailModalState extends State<UserEditModal> {
                     return DropdownButton<Department>(
                       value: selectedDepartment,
                       isExpanded: true,
-                      dropdownColor: Colors.white,
+                      dropdownColor:Get.isDarkMode? Colors.black:Colors.white,
+
                       iconSize: 30.0,
                       icon: Icon(Icons.arrow_drop_down,
-                        color: Colors.black,),
+                        color:Get.isDarkMode? Colors.white:Colors.black,
+                      ),
                       style: TextStyle(color: Colors.blue),
                       hint: selectedDepartment == null
                           ? Text(userDepartmentController.text,
                         style: TextStyle(
-                            color: Colors.black45
+                          color:Get.isDarkMode? Colors.white:Colors.black,
+
                         ),)
                           : Text(
                         selectedDepartment!.name,
@@ -116,7 +127,8 @@ class _UserDetailModalState extends State<UserEditModal> {
                           value: department,
                           child: Text(department.name,
                             style: TextStyle(
-                                color: Colors.black,
+                                color:Get.isDarkMode? Colors.white:Colors.black,
+
                                 fontSize: 20
                             ),),
                         );
@@ -137,24 +149,28 @@ class _UserDetailModalState extends State<UserEditModal> {
               TextField(
                 controller: userNameController,
                 decoration: InputDecoration(labelText: 'Username',hintStyle: TextStyle(
-                    color: Colors.black
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+
                 )),
                 style: TextStyle(
-                    color: Colors.black
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+
                 ),
               ),
               TextField(
                 controller: userEmailController,
                 decoration: InputDecoration(labelText: 'Email'),
                 style: TextStyle(
-                    color: Colors.black
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+
                 ),
               ),
               TextField(
                 controller: userContactNumber,
                 decoration: InputDecoration(labelText: 'Mobile Number'),
                 style: TextStyle(
-                    color: Colors.black
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+
                 ),
               ),
               // Add text fields for other fields as needed

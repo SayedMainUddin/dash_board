@@ -60,19 +60,31 @@ class _CreateUserModalState extends State<CreateUserModal> {
           width: MediaQuery.of(context).size.width*0.60,
          // height: MediaQuery.of(context).size.height*0.80,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:Get.isDarkMode? Colors.black:Colors.white,
             borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(
+              color:Get.isDarkMode? Colors.white:Colors.black,
+            )
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Create User',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(),
+                  Text(
+                    'Create User',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color:Get.isDarkMode? Colors.white:Colors.black,
+                    ),
+                  ),
+                  IconButton(onPressed: (){
+                    Get.back();
+                  }, icon: Icon(Icons.highlight_remove_rounded,color: Colors.red,))
+                ],
               ),
               SizedBox(height: 16.0),
 
@@ -88,15 +100,15 @@ class _CreateUserModalState extends State<CreateUserModal> {
                     return DropdownButton<Department>(
                       value: selectedDepartment,
                       isExpanded: true,
-                      dropdownColor: Colors.white,
+                      dropdownColor: Get.isDarkMode? Colors.black:Colors.white,
                       iconSize: 30.0,
                       icon: Icon(Icons.arrow_drop_down,
-                      color: Colors.black,),
+                        color:Get.isDarkMode? Colors.white:Colors.black,),
                       style: TextStyle(color: Colors.blue),
                       hint: selectedDepartment == null
                           ? Text('Departments',
                       style: TextStyle(
-                        color: Colors.black45,
+                          color:Get.isDarkMode? Colors.white:Colors.black,
                         fontSize: 15
                       ),)
                           : Text(
@@ -114,7 +126,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
                           value: department,
                           child: Text(department.name,
                             style: TextStyle(
-                                color: Colors.black,
+                                color:Get.isDarkMode? Colors.white:Colors.black,
                               fontSize: 20
                             ),),
                         );
@@ -199,7 +211,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
                   label: Text(
                     "Date Of Birth:" + selectedDate.toString().split(' ')[0],
                     style: TextStyle(
-                        color:Colors.black54
+                      color:Get.isDarkMode? Colors.white:Colors.black,
                     ),
                   ),
 
@@ -235,7 +247,8 @@ class _CreateUserModalState extends State<CreateUserModal> {
                     new Text(
                       'Select Gender :',
                       style: new TextStyle(fontSize: 15.0,
-                          color:  Colors.black54),
+                        color:Get.isDarkMode? Colors.white:Colors.black,
+                      ),
                     ),
                     Radio<String>(
                       value: "Male",

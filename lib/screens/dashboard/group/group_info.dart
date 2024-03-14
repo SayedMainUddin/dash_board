@@ -772,11 +772,11 @@ class _ForAddMember extends State<ForAddMember> {
     // TODO: implement initState
     super.initState();
   }
-  AddMemberToExistGroup(memberName,id) async{
+  AddMemberToExistGroup(memberId,memberName) async{
 
     Map data = {
       "GroupId":widget.GroupId,
-      "MemberId":id,
+      "MemberId":memberId,
       "MemberName":memberName,
       "OwnName":LocalStorage.ADMINNAME,
       "UserId":LocalStorage.ADMINID,
@@ -801,7 +801,7 @@ class _ForAddMember extends State<ForAddMember> {
     Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () {
-        AddMemberToExistGroup(userName,userId);
+        AddMemberToExistGroup(userId,userName);
         if (mounted) {
           setState(() {
             groupMemberForExistingArray!.removeAt(index);
@@ -820,7 +820,7 @@ class _ForAddMember extends State<ForAddMember> {
     // configura o  AlertDialog
     Get.defaultDialog(
         title: "Are you sure?",
-        middleText: "Do you want to remove this user?",
+        middleText: "Do you want to add this user?",
         backgroundColor: Colors.amber,
         titleStyle: TextStyle(color: Colors.white),
         middleTextStyle: TextStyle(color: Colors.white),
@@ -839,7 +839,7 @@ class _ForAddMember extends State<ForAddMember> {
     content: SizedBox(
     width: Get.width*0.50, // Adjust width as needed
     height: Get.height*0.60,
-        child: Scaffold(
+      child: Scaffold(
       backgroundColor:Get.isDarkMode?Colors.black: Color(0xfff4f4f9),
       appBar: AppBar(
         backgroundColor: Get.isDarkMode?Colors.black:Colors.white,
@@ -885,7 +885,9 @@ class _ForAddMember extends State<ForAddMember> {
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black54),
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+
+                ),
               ),
             ),
             Expanded(
@@ -956,7 +958,7 @@ class _ForAddMember extends State<ForAddMember> {
                                         : Icon(Icons.remove_circle)),
                                 onTap: () {
                                   print('add button clicked');
-                                  showAlerDialog(groupMemberForExistingArray![index].name,groupMemberForExistingArray![index].uniqueId,index);
+                                  showAlerDialog(groupMemberForExistingArray![index].uniqueId,groupMemberForExistingArray![index].name,index);
 
 
                                 },
@@ -973,7 +975,8 @@ class _ForAddMember extends State<ForAddMember> {
           ],
         ),
       ),
-    ),)
+    ),
+    )
     );
   }
 }
@@ -987,18 +990,13 @@ class AddMemberCard extends StatefulWidget {
 }
 
 class _AddMemberCard extends State<AddMemberCard> {
-//  static IO.Socket socket = SocketController.socket;
-
   bool isAddButtonClick = true;
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(child: InkWell(
       child: Container(
-        // color: Color(0xff8ededfb),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(7.0, 10.0, 0.0, 5.0),
-          //  padding: const EdgeInsets.only(bottom: 20,top:0.0),
           child: Row(
             children: <Widget>[
               Container(
@@ -1078,7 +1076,6 @@ class _AddMemberCard extends State<AddMemberCard> {
                     width: MediaQuery.of(context).size.width * 0.50,
                     child: Text(
                       widget.contact!.name!,
-                      //  conversationList[index]['time'],
                       style:
                       TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
@@ -1262,21 +1259,6 @@ class _GroupDetailsState extends State<GroupDetails> {
               ),
 
               Divider(height: 1,color: Colors.blue,),
-              // ListTile(
-              //   onTap: (){
-              //     var    pageName='GroupProfile';
-              //     Navigator.pop(context);
-              //
-              //     //  _openCamera(context);
-              //     // profilePicChange(ImageSource.camera,context: context);
-              //     //       Navigator.pop(context);
-              //   },
-              //   title: Text("Camera"),
-              //   leading: Icon(Icons.camera,color: Colors.blue,),
-              // ),
-              // Divider(height: 1,color: Colors.blue,),
-
-
             ],
           ),
         ),);
@@ -1287,7 +1269,7 @@ class _GroupDetailsState extends State<GroupDetails> {
 
   Future<void> profilePicChange(ImageSource source,
       {BuildContext? context, bool isMultiImage = false}) async {
-var header={'Authorization': 'Bearer ${LocalStorage.BearerTOKEN}'};
+    var header={'Authorization': 'Bearer ${LocalStorage.BearerTOKEN}'};
     pickedFile = await _picker.pickImage(
       source: source,
       maxWidth: 1000,
@@ -1311,27 +1293,18 @@ var header={'Authorization': 'Bearer ${LocalStorage.BearerTOKEN}'};
     request.fields["FineName"] = listOfFile;
     // send request to upload image
     await request.send().then((response) async {
-      // listen for response
       response.stream.transform(utf8.decoder).listen((value) {
         final dir = Directory(pickedFile!.path);
         dir.deleteSync(recursive: true);
         String jsonStr = value;
-
-        // Parse the JSON string
         Map<String, dynamic> jsonData = json.decode(jsonStr);
-
-        // Access the "Data" field
         String dataValue = jsonData["Data"];
         if (dataValue.startsWith('../')) {
           dataValue = dataValue.substring(2);
         }
         groupProfile = '${WebApi.basesUrl}'+ dataValue;
-        // localStorage.groupProfileImage=groupProfile;
-        print(groupProfile); // T
-
-
+        print(groupProfile);
       });
-
     }).catchError((e) {
       print(e);
     });

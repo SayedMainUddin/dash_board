@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:js';
 import 'dart:html' as html;
 import 'package:dash_board/bindings.dart';
+import 'package:dash_board/constants.dart';
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/screens/login/login_screen.dart';
 import 'package:dash_board/screens/main/main_screen.dart';
@@ -10,6 +11,7 @@ import 'package:dash_board/utils/socket.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -67,6 +69,12 @@ Future<void> main() async {
       GetMaterialApp(
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.system,
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: bgColor,
+          textTheme: GoogleFonts.poppinsTextTheme(Get.textTheme)
+              .apply(bodyColor: Colors.white),
+          canvasColor: secondaryColor,
+        ),
         initialRoute: '/',
         getPages: [
           GetPage(name: '/', page: () =>logedin=='yes'? MyApp():LoginPage(), binding: AppBindings()),

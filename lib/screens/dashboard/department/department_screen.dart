@@ -14,27 +14,21 @@ import '../../../models/Users.dart';
 
 
 
-class DepartmentPage extends StatefulWidget {
-  @override
-  _DepartmentPageState createState() => _DepartmentPageState();
-}
+class DepartmentPage extends StatelessWidget {
 
-class _DepartmentPageState extends State<DepartmentPage> {
   //List<Department> departments = []; // Your list of categories
   final MenuAppController menuAppController=Get.put(MenuAppController());
 
   final ApiController apiController=Get.put(ApiController());
-  @override
-  void initState() {
-    super.initState();
-
-
-  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child:  SingleChildScrollView(
+
+        child:GetBuilder<ApiController>(builder: (controller){
+      // final filteredUsers = apiController.getFilteredUsers();
+
+      return       SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child:Column(
           children: [
@@ -48,11 +42,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     IconButton(onPressed: (){
-                      setState(() {
+                      apiController.getAllDepartments();
 
-                        apiController.getAllDepartments();
-
-                      });
                     }, icon: Icon(Icons.refresh))
                   ],
                 ),
@@ -88,7 +79,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
                   // If the Future is complete, display the list of departments
                   final List<Department> departments = snapshot.data ?? [];
                   return DepartmentListTable(
-                    departmentList:departments
+                      departmentList:departments
                   );
 
                 }
@@ -96,7 +87,9 @@ class _DepartmentPageState extends State<DepartmentPage> {
             ),
           ],
         ),
-      ),
+      );}),
+
+
     );
   }
 

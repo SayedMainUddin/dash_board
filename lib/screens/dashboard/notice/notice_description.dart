@@ -50,7 +50,7 @@ class NoticeDetailScreen extends StatelessWidget {
     print('Unseen UserNames: $unseenUserNames');
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),),
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: contentBox(context, seenUserNames,seenUserEmail, unseenUserNames,unseenUserEmail),
@@ -61,8 +61,11 @@ class NoticeDetailScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        color: Colors.white,
+          color: Get.isDarkMode?Colors.black:Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color:  Get.isDarkMode?Colors.white:Colors.black,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black,
@@ -83,7 +86,8 @@ class NoticeDetailScreen extends StatelessWidget {
                   child: Text("Title: ${notice.noticeTitle!}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16
+                    fontSize: 16,
+                      color: Get.isDarkMode?Colors.white:Colors.black
                   ),),
                   width: Get.width*0.40,
                 ),
@@ -91,10 +95,19 @@ class NoticeDetailScreen extends StatelessWidget {
                 SizedBox(height: 8),
 
                 Container(
-                    child: Text('Description: ${notice.noticeDescription}'),
+                    child: Text('Description: ${notice.noticeDescription}',
+                    style: TextStyle(
+                        color: Get.isDarkMode?Colors.white:Colors.black
+                    ),),
                   width: Get.width*0.40,
                 ),
                 SizedBox(height: 8),
+                Text('Created: ${notice.creatingDate}',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    color: Colors.teal
+                  ),),
                 Text('Deadline: ${notice.noticeDeadLine}',
                   style: TextStyle(
                       fontWeight: FontWeight.w400,

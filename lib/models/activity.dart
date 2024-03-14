@@ -5,8 +5,8 @@ class Activity {
   final String? senderId;
   final String? receiverId;
   final String? groupId;
-  final String? senderName;
-  final String? receiverName;
+   String? senderName;
+   String? receiverName;
   final String? actionDate;
 
   Activity({

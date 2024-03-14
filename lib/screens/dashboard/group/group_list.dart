@@ -89,10 +89,10 @@ setState(() {
                 ],
               ),
               Container(
-                width: 200,
-                height: 30,
+                width: Get.width*0.20,
+                height: Get.height*0.05,
                 child: SearchBar(
-                  hintText: "Search by name",
+                  hintText: "Search",
                   leading: Icon(Icons.search),
                   //onChanged: apiController.setSearchQuery,
                   onChanged: (String? value){
@@ -172,6 +172,11 @@ setState(() {
                 ):DataColumn(
                   label: Text(""),
                 ),
+                !Responsive.isMobile(context)?    DataColumn(
+                  label: Text("Date"),
+                ):DataColumn(
+                  label: Text(""),
+                ),
                 DataColumn(
                   label: Text("Action"),
                 ),
@@ -240,20 +245,22 @@ setState(() {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: Container(
-                    width: 80,
+                    width: Get.width*0.10,
                       child: Text(groupInfo.groupName,overflow: TextOverflow.ellipsis,)
                   ),
                 ),
+
               ],
             ),
           ),
         ),
-        // !Responsive.isMobile(context)
-        //     ? DataCell(Text(groupInfo.privacy))
-        //     : DataCell(Text("")),
         !Responsive.isMobile(context)
             ? DataCell(Text(groupInfo.membersID.length.toString()))
             : DataCell(Text("")),
+        !Responsive.isMobile(context)
+            ? DataCell(Text(groupInfo.dateTime.toString()))
+            : DataCell(Text("")),
+
 
         DataCell(
           Row(
@@ -294,7 +301,7 @@ setState(() {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:IconButton(onPressed: (){
-                  showGroupChatModal(context, groupInfo.groupName,groupInfo.id,"group");
+                  showGroupChatModal(context, groupInfo.groupName,groupInfo.id,"Group");
 
                 },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
               ),

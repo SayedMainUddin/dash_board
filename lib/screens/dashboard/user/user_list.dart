@@ -1,6 +1,7 @@
 
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/controllers/api_controller.dart';
+import 'package:dash_board/models/Groups.dart';
 import 'package:dash_board/models/RecentFile.dart';
 import 'package:dash_board/models/Users.dart';
 import 'package:dash_board/responsive.dart';
@@ -143,7 +144,6 @@ class _UserListPageState extends State<UserListPage> {
                 child: SearchBar(
                  hintText: "Search user by any",
                   leading: Icon(Icons.search),
-
                   //onChanged: apiController.setSearchQuery,
                   onChanged: (String? value){
                    apiController.getFilteredUsers(value);
@@ -162,6 +162,47 @@ class _UserListPageState extends State<UserListPage> {
                 ),
               ),
 
+
+              !Responsive.isMobile(context)?
+              Container(
+                color: Get.isDarkMode?Colors.black54: Colors.white,
+
+                // margin: const EdgeInsets.all(15.0),
+             //   padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+             //    decoration: BoxDecoration(
+             //        color: Get.isDarkMode?Colors.black54: Colors.white,
+             //        border: Border.all(color: Get.isDarkMode?Colors.black54: Colors.white,)
+             //    ),
+                child: DropdownButton(
+                  value: selectedSortingOption,
+                 // focusColor: Get.isDarkMode?Colors.white: Colors.black,
+                 // dropdownColor: Get.isDarkMode?Colors.white: Colors.black,
+                  hint: Text('Sorting'),
+                 // borderRadius: BorderRadius.circular(15),
+                  items: sortingOptions
+                      .map((option) => DropdownMenuItem(
+                    value: option,
+                    child: Text(option),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedSortingOption = value.toString();
+                      _sortUserList();
+                    });
+                  },
+                ),
+              ):Container(),
+
+              !Responsive.isMobile(context)? IconButton(
+                icon: Icon(Icons.sort),
+                onPressed: () {
+                  setState(() {
+                    isAscending = !isAscending;
+                    _sortUserList();
+                  });
+                },
+              ):Container(),
               selectedUsers.length>0? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:Row(
@@ -193,41 +234,6 @@ class _UserListPageState extends State<UserListPage> {
                 icon: Icon(Icons.add),
                 label: Text("Create User"),
               ),
-              !Responsive.isMobile(context)?  Container(
-                margin: const EdgeInsets.all(15.0),
-                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.white)
-                ),
-                child: DropdownButton(
-                  value: selectedSortingOption,
-                  hint: Text('Sorting'),
-                  borderRadius: BorderRadius.circular(15),
-                  items: sortingOptions
-                      .map((option) => DropdownMenuItem(
-                    value: option,
-                    child: Text(option),
-                  ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedSortingOption = value.toString();
-                      _sortUserList();
-                    });
-                  },
-                ),
-              ):Container(),
-
-              !Responsive.isMobile(context)? IconButton(
-                icon: Icon(Icons.sort),
-                onPressed: () {
-                  setState(() {
-                    isAscending = !isAscending;
-                    _sortUserList();
-                  });
-                },
-              ):Container(),
             ],
           ),
           SizedBox(
@@ -356,7 +362,7 @@ class _UserListPageState extends State<UserListPage> {
 
                   });
 
-                },icon: Icon(Icons.stop_circle_outlined,color: Colors.purple,),),
+                },icon: Icon(Icons.stop_circle_outlined,color: Colors.red,),),
               ):
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
@@ -395,6 +401,56 @@ class _UserListPageState extends State<UserListPage> {
 
                    showUserDetailModal(context,user: userInfo);
                 },icon: Icon(Icons.details_outlined,color: Colors.green,),),
+              ),
+              IconButton(
+                icon: Icon(Icons.group),
+                onPressed: () {
+                  apiController.findUserGroups(userInfo.userId!);
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Groups of ${userInfo.userName}'),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: apiController.userInGroupList
+                                .map(
+                                  (group) => ListTile(
+                                    leading:     Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(50),
+                                          border: Border.all(
+                                              color:Colors.green
+                                          ),
+
+                                          image: DecorationImage(image: NetworkImage(group.groupPic))
+                                      ),
+                                    ),
+                                title: Text(group.groupName),
+
+                               // subtitle: Text(group.),
+                              ),
+                            )
+                                .toList(),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                             apiController.userInGroupList==[];
+                            },
+                            child: Text('Close'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

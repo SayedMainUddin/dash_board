@@ -1,11 +1,13 @@
 import 'package:dash_board/constants.dart';
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/notice.dart';
+import 'package:dash_board/responsive.dart';
 import 'package:dash_board/screens/dashboard/activity/group/group_activity_controller.dart';
 import 'package:dash_board/screens/dashboard/activity/user/user_activity_controller.dart';
 import 'package:dash_board/screens/dashboard/group/group_controllers/group_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_description.dart';
+import 'package:dash_board/utils/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,6 +43,19 @@ class UserActivityPage extends StatelessWidget {
                             controller.fetchActivity();
                           }, icon: Icon(Icons.refresh)
                           ),
+                          SizedBox(width: Get.width*0.20,),
+                          Container(
+                            width: Get.width*0.15,
+                            height: 30,
+                            child: SearchBar(
+                              hintText: "Search",
+                              leading: Icon(Icons.search),
+                              //onChanged: apiController.setSearchQuery,
+                              onChanged: (String? value){
+                                userActivityController.getFilteredUserActivity(value);
+                              },
+                            ),
+                          ),
                         ],
                       ),
                       Row(
@@ -59,11 +74,13 @@ class UserActivityPage extends StatelessWidget {
 
 
                           SizedBox(width: Get.width*0.20,),
-                          Text("Activity For",style: TextStyle(
+                          Text("Activities",style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: Get.width*0.40,),
+                          !Responsive.isMobile(context)
+                              ?
+                          SizedBox(width: Get.width*0.40,): SizedBox(width: Get.width*0.10,),
                           Text("Date",style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold
@@ -81,7 +98,7 @@ class UserActivityPage extends StatelessWidget {
                   // ),
                 ],
               ),
-              SizedBox(height: 20),
+             // SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: Get.height*0.80,
@@ -93,20 +110,22 @@ class UserActivityPage extends StatelessWidget {
                     separatorBuilder: (BuildContext context, int index) => Divider(), // Add Divider between ListTiles
                     itemBuilder: (context, index) {
                       var activity = controller.activityList[index];
-                      var allUsers = apiController.userList;
-
-                      // Create a map from userId to userName
-                      Map<String, String> userIdToNameMap = {};
-                      Map<String, String> senderIdToNameMap = {};
-                      allUsers.forEach((user) {
-                        userIdToNameMap[user.userId!] = user.userName!;
-                      });
-                      // allUsers.forEach((user) {
-                      //   userIdToNameMap[user.senderId!] = user.userName!;
+                      // var allUsers = apiController.userList;
+                      // print(allUsers);
+                      //
+                      // // Create a map from userId to userName
+                      // Map<String, String> userIdToNameMap = {};
+                      // Map<String, String> senderIdToNameMap = {};
+                      // allUsers.map((user) {
+                      //   print(allUsers[0].userId);
+                      //   userIdToNameMap[user.userId!] = user.userName!;
                       // });
-                      // Get senderName and receiverName using userIdToNameMap
-                      String senderName = senderIdToNameMap[activity.senderId] ?? 'Admin';
-                      String receiverName = userIdToNameMap[activity.receiverId] ?? 'Unknown';
+                      // // allUsers.forEach((user) {
+                      // //   userIdToNameMap[user.senderId!] = user.userName!;
+                      // // });
+                      // // Get senderName and receiverName using userIdToNameMap
+                      // String senderName = senderIdToNameMap[activity.senderId] ?? LocalStorage.ADMINNAME;
+                      // String receiverName = userIdToNameMap[activity.receiverId] ?? 'Unknown';
 
                       return ListTile(
                         leading: Container(
@@ -135,7 +154,7 @@ class UserActivityPage extends StatelessWidget {
                         ),
                         title: Container(
                           width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: const EdgeInsets.only(left: 100),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -147,14 +166,14 @@ class UserActivityPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Sender: $senderName',
+                                'Sender: ${activity.senderName}',
                                 style: TextStyle(
                                   fontSize: 15,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Text(
-                                'Receiver: $receiverName',
+                                'Receiver: ${activity.receiverName}',
                                 style: TextStyle(
                                   fontSize: 15,
                                   overflow: TextOverflow.ellipsis,
@@ -167,7 +186,7 @@ class UserActivityPage extends StatelessWidget {
 
                         trailing: Container(
                           width: MediaQuery.of(context).size.width * 0.10,
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: const EdgeInsets.only(right: 10),
                           child: Text(
                             ' ${activity.actionDate.toString().substring(0,16)}',
                             style: TextStyle(
@@ -210,8 +229,8 @@ class UserActivityPage extends StatelessWidget {
                 decoration: InputDecoration(labelText: 'Title'),
               ),
               Container(
-                width: 400,
-                height: 200,
+                width: Get.width*0.40,
+                height: Get.height*0.30,
                 child: SingleChildScrollView(
                   child: TextField(
                     controller: descriptionController,

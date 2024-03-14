@@ -1,6 +1,7 @@
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/MyFiles.dart';
 import 'package:dash_board/models/notice.dart';
+import 'package:dash_board/responsive.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_controller.dart';
 import 'package:dash_board/screens/dashboard/notice/notice_description.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class NoticePage extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      !Responsive.isMobile(context)?
                       Row(
                         children: [
                           Text("NoticeList"),
@@ -43,28 +45,41 @@ class NoticePage extends StatelessWidget {
                             controller.fetchNotices();
                           }, icon: Icon(Icons.refresh)
                           ),
+                          SizedBox(width: Get.width*0.20,),
+                          Container(
+                            width: Get.width*0.20,
+                            height: 30,
+                            child: SearchBar(
+                              hintText: "Search by any",
+                              leading: Icon(Icons.search),
+                              //onChanged: apiController.setSearchQuery,
+                              onChanged: (String? value){
+                                controller.getFilteredNotice(value);
+                              },
+                            ),
+                          ),
                         ],
-                      ),
+                      ):Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-
+                          SizedBox(width: Get.width*0.03,),
                           Text("Title",style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 120,),
+                          SizedBox(width: Get.width*0.12,),
                           Text("Description",style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 120,),
+                          SizedBox(width: Get.width*0.10,),
 
                           Text("Seen Users",style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold
                           ),),
-                          SizedBox(width: 170,),
+                          SizedBox(width: Get.width*0.10,),
 
                           Text("Unseen Users",style: TextStyle(
                               fontSize: 16,
@@ -73,15 +88,38 @@ class NoticePage extends StatelessWidget {
 
                         ],
                       ),
+                      Responsive.isMobile(context)?
+                      Container(
+                        width: Get.width*0.15,
+                        child:ElevatedButton(
+                          onPressed: () {
+                            // Open the create notice modal
+                            _showCreateNoticeDialog(context);
+                          },
+                          child: Text('+ Create Notice',
+                            style: TextStyle(
+                                overflow: TextOverflow.ellipsis
+                            ),),
+                        ),
+
+                      ):Container(),
+
                     ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Open the create notice modal
-                      _showCreateNoticeDialog(context);
-                    },
-                    child: Text('Create Notice'),
-                  ),
+                  !Responsive.isMobile(context)?Container(
+                    width: Get.width*0.15,
+                    child:ElevatedButton(
+                      onPressed: () {
+                        // Open the create notice modal
+                        _showCreateNoticeDialog(context);
+                      },
+                      child: Text('+ Create Notice',
+                        style: TextStyle(
+                            overflow: TextOverflow.ellipsis
+                        ),),
+                    ),
+
+                  ):Container()
                 ],
               ),
               SizedBox(height: 20),
@@ -114,7 +152,7 @@ class NoticePage extends StatelessWidget {
                         title: Row(
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width * 0.10,
+                              width: MediaQuery.of(context).size.width * 0.15,
                               padding: const EdgeInsets.only(left: 10),
                               child: Text(
                                 '${notice.noticeDescription}',
@@ -152,7 +190,7 @@ class NoticePage extends StatelessWidget {
                           width: MediaQuery.of(context).size.width * 0.10,
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            ' ${notice.noticeDeadLine.toString()}',
+                            'Deadline: ${notice.noticeDeadLine.toString()}',
                             style: TextStyle(
                               fontSize: 12,
                               overflow: TextOverflow.ellipsis,
@@ -262,6 +300,7 @@ class NoticePage extends StatelessWidget {
 
     return showDialog(
       context: context,
+
       builder: (context) {
         return AlertDialog(
           title: Text('Create Notice'),

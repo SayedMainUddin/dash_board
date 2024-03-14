@@ -1,5 +1,6 @@
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/controllers/api_controller.dart';
+import 'package:dash_board/main.dart';
 import 'package:dash_board/responsive.dart';
 import 'package:dash_board/screens/login/login_controller.dart';
 import 'package:dash_board/screens/login/login_screen.dart';
@@ -31,38 +32,67 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
+    return Container(
+    //  color: Color(0xff1B3F4BFF),
+      decoration: BoxDecoration(
+          //color: Get.isDarkMode?Color(0xff1B3F4BFF):Colors.red,
+        border: Border.all(
+          color: Color(0xff1B3F4BFF),
+          width: 2
+        )
+      ),
+      child: Row(
+        children: [
 
-        if (!Responsive.isDesktop(context))
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: menuAppController.controlMenu,
-          ),
-        if (!Responsive.isMobile(context))
-          Container(
-            padding: EdgeInsets.all(defaultPadding),
-            child: Text(
-              "Dashboard",
-              style: Theme.of(context).textTheme.titleLarge,
+          if (!Responsive.isDesktop(context))
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: menuAppController.controlMenu,
             ),
+          if (!Responsive.isMobile(context))
+            Container(
+              padding: EdgeInsets.all(defaultPadding),
+              child: Text(
+                "Dashboard",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+          IconButton(
+            onPressed: () {
+
+              Get.defaultDialog(
+                title: "Confirmation",
+                middleText: "Are you sure you want to change the theme?",
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                      themeController.toggleDarkMode();
+                      Get.changeTheme(Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
+                      setState(() {});
+
+                    },
+                    child: Text("Yes"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: Text("No"),
+                  ),
+                ],
+              );
+            },
+            icon: Icon(Icons.mode_night_outlined),
           ),
-        IconButton(
-            onPressed: (){
-          print("mode change");
-          setState(() {
-            Get.changeTheme(Get.isDarkMode? ThemeData.light(): ThemeData.dark());
-           themeController.toggleDarkMode();
 
 
-          });
-
-        }, icon: Icon(Icons.mode_night_outlined)),
-        if (!Responsive.isMobile(context))
-          Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-       // Expanded(child: SearchField()),
-        ProfileCard(menuItem: MenuItem.values[0],)
-      ],
+          if (!Responsive.isMobile(context))
+            Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
+         // Expanded(child: SearchField()),
+          ProfileCard(menuItem: MenuItem.values[0],)
+        ],
+      ),
     );
   }
 }

@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 class GroupActivityPage extends StatelessWidget {
   final GroupActivityController groupActivityController = Get.put(GroupActivityController());
   final ApiController apiController=Get.put(ApiController());
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,6 +41,19 @@ class GroupActivityPage extends StatelessWidget {
                           IconButton(onPressed: (){
                             controller.fetchActivity();
                           }, icon: Icon(Icons.refresh)
+                          ),
+                          SizedBox(width: Get.width*0.20,),
+                          Container(
+                            width: 200,
+                            height: 30,
+                            child: SearchBar(
+                              hintText: "Search",
+                              leading: Icon(Icons.search),
+                              //onChanged: apiController.setSearchQuery,
+                              onChanged: (String? value){
+                                groupActivityController.getFilteredGroupActivity(value);
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -99,7 +113,7 @@ class GroupActivityPage extends StatelessWidget {
                 width: double.infinity,
                 height: 500,
                 child:Obx(() {
-                  var i=1;
+                 //
                   return ListView.separated(
                     itemCount: controller.activityList.length,
                     shrinkWrap: true,
@@ -130,7 +144,7 @@ class GroupActivityPage extends StatelessWidget {
                                 child: RichText(text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: '${i++}    ',
+                                        text: '${index+1}    ',
                                         style: TextStyle(
                                           color: Get.isDarkMode?Colors.white:Colors.black, // Color for the "Description: " part
                                           fontSize: 15,

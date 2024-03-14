@@ -88,7 +88,6 @@ class _ChatModalState extends State<GroupChatModal> {
   DateTime d = DateTime.now();
   dynamic _pickImageError;
   bool isVideo = false;
-  //VideoPlayerController? _toBeDisposed;
   String? _retrieveDataError;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController maxWidthController = TextEditingController();
@@ -291,7 +290,7 @@ class _ChatModalState extends State<GroupChatModal> {
 
           setState(() {
             isSentFile=false;
-            fileBytes=null;
+
           });
 
           //   Get.back();
@@ -305,7 +304,7 @@ class _ChatModalState extends State<GroupChatModal> {
       var fileList = selectedFileResult!.files;
 
       for (var file in fileList) {
-        if (file.size! > 26214400) {
+        if (file.size > 26214400) {
           showAlerDialog(
             "Overflow!",
             "File Size is too large. Max file size is 25 MB",
@@ -345,7 +344,7 @@ class _ChatModalState extends State<GroupChatModal> {
 
           setState(() {
             isSentImage=false;
-            fileBytes=null;
+
           });
 
           //   Get.back();
@@ -360,6 +359,7 @@ class _ChatModalState extends State<GroupChatModal> {
     // TODO: implement initState
     super.initState();
     userChatController.selectedId.value=widget.selectedId!;
+    userChatController.selectedType.value=widget.receiverType!;
     //userChatController.selectedType.value="group";
     groupController.selectedType.value="Group";
     groupController.selectedName.value=widget.receiverName!;
@@ -369,7 +369,7 @@ class _ChatModalState extends State<GroupChatModal> {
   }
   @override
   Widget build(BuildContext context) {
-    // Get.lazyPut(()=>UserChatController());
+     Get.lazyPut(()=>UserChatController());
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -383,8 +383,9 @@ class _ChatModalState extends State<GroupChatModal> {
         //  height:          _imageFileList!.length>0 ?MediaQuery.of(context).size.height*0.70: MediaQuery.of(context).size.height*0.40,
 
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
+            color:Get.isDarkMode?Colors.black: Colors.white,
+            borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(color: Get.isDarkMode?Colors.white:Colors.black)
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -405,6 +406,8 @@ class _ChatModalState extends State<GroupChatModal> {
                   //Get.to(()=>MyApp());
                   Navigator.pop(Get.context!);
                   userChatController.dataProcessed.value=false;
+                  socketController.socket.off('loadDataWeb' + LocalStorage.ADMINID);
+
                 }, icon: Icon(Icons.disabled_by_default_outlined))
               ],
             ),
@@ -481,7 +484,7 @@ class _ChatModalState extends State<GroupChatModal> {
                     //    context: context,);
                   },
                 ),
-                fileBytes != null?
+                isSentFile||isSentImage?
                 Expanded(
                     child: Text("Send file to group",
                       style: TextStyle(
@@ -502,7 +505,7 @@ class _ChatModalState extends State<GroupChatModal> {
                     ),
                   ),
                 ),
-                fileBytes != null?
+                isSentFile==true||isSentImage==true?
                 IconButton(
                   icon: Icon(Icons.send,color: Colors.teal,),
                   onPressed: () {

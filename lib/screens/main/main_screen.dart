@@ -1,6 +1,7 @@
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/responsive.dart';
+import 'package:dash_board/screens/dashboard/components/header.dart';
 import 'package:dash_board/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,10 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       key: menuAppController.scaffoldKey,
       drawer: SideMenu(),
+    //  drawerScrimColor: Colors.blue,
+     // endDrawer:  ProfileCard(menuItem: MenuItem.values[0],),
+     // backgroundColor: Colors.blue,
+
       body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +37,7 @@ class MainScreen extends StatelessWidget {
               ),
 
             Container(
-              width: 02,
+             // width: 02,
             height: _height*0.99,
               color: Colors.white10,
 

@@ -26,6 +26,7 @@ class MESSAGE {
   final String? showRunTime;
   bool? isVisible;
   bool? dateHeading;
+  final String? messageStatus;
   MESSAGE({
     this.uniqueIndex,
     this.id,
@@ -53,6 +54,7 @@ class MESSAGE {
     this.seenValue,
     this.showRunTime,
     this.isVisible,
-    this.dateHeading
+    this.dateHeading,
+    this.messageStatus
   });
 }

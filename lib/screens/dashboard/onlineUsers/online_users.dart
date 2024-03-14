@@ -133,23 +133,6 @@ class _UserListPageState extends State<OnlineUserList> {
                 columnSpacing: defaultPadding,
                 // minWidth: 600,
                 columns: [
-                  /*  DataColumn(
-                  label: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: Checkbox(
-                      value: selectedUsers.length == userList.length,
-                      onChanged: (selected) {
-                        // Handle "Select All" checkbox change here
-                        setState(() {
-                          selectedUsers.forEach((user) {
-                            user.isSelected = selected ?? false;
-                          });
-                        });
-                      },
-                    ),
-                  ),
-                ),*/
 
                   DataColumn(
                     label: Text("User"),
@@ -160,7 +143,12 @@ class _UserListPageState extends State<OnlineUserList> {
                     label: Text(""),
                   ),
                   !Responsive.isMobile(context)?    DataColumn(
-                    label: Text("Address"),
+                    label: Text("Mobile No"),
+                  ):DataColumn(
+                    label: Text(""),
+                  ),
+                  !Responsive.isMobile(context)?    DataColumn(
+                    label: Text("Department"),
                   ):DataColumn(
                     label: Text(""),
                   ),
@@ -180,8 +168,6 @@ class _UserListPageState extends State<OnlineUserList> {
         );}),
     );
   }
-
-
   DataRow recentFileDataRow(BuildContext context, User userInfo) {
     ApiController apiController =Get.put(ApiController());
     return DataRow(
@@ -213,30 +199,16 @@ class _UserListPageState extends State<OnlineUserList> {
             },
             child: Row(
               children: [
-                // CircleAvatar(
-                //   child: Image.asset(userInfo.userImageUrl!),
-                // ),
-                // Container(
-                //
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(50),
-                //     border: Border.all(
-                //       color:Colors.green
-                //     )
-                //   ),
-                //
-                //   child: Image.network(userInfo.userImageUrl!,width: 30,height: 30),
-                // ),
                 Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color:Colors.green
-                    ),
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                          color:Colors.green
+                      ),
 
-                    image: DecorationImage(image: NetworkImage(userInfo.userImageUrl!))
+                      image: DecorationImage(image: NetworkImage(userInfo.userImageUrl!))
                   ),
                 ),
 
@@ -256,9 +228,11 @@ class _UserListPageState extends State<OnlineUserList> {
             ? DataCell(Text(userInfo.email!))
             : DataCell(Text("")),
         !Responsive.isMobile(context)
-            ? DataCell(Text(userInfo.address!))
+            ? DataCell(Text(userInfo.mobile!))
             : DataCell(Text("")),
-
+        !Responsive.isMobile(context)
+            ? DataCell(Text(userInfo.userDepartment!))
+            : DataCell(Text("")),
         DataCell(
           Row(
             children: [
@@ -274,7 +248,6 @@ class _UserListPageState extends State<OnlineUserList> {
                 child:           IconButton(onPressed: (){
                   showMuteUserModal(context, () {
                     apiController.muteUser(context,{"UserId":userInfo.userId,"AdminId":LocalStorage.ADMINID,"UserStatus":"Active"});
-                    print('User account deleted!');
 
                   });
 
@@ -291,26 +264,82 @@ class _UserListPageState extends State<OnlineUserList> {
 
                 },icon: Icon(Icons.airplanemode_active,color: Colors.deepOrange,),),
               ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
+              //   child: IconButton(
+              //     onPressed: (){
+              //     showDeleteUserModal(context, () {
+              //       apiController.deleteUser(context,{"UserId":userInfo.userId,"AdminId":LocalStorage.ADMINID});
+              //       setState(() {
+              //
+              //       });
+              //     });
+              //     // showUserDetailModal(context,user: userInfo);
+              //   },icon: Icon(Icons.delete_outline,color: Colors.red,),),
+              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
+                child:IconButton(onPressed: (){
+                  showChatModal(context, userInfo.userName!,userInfo.userId!,"user");
+                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child: IconButton(
                   onPressed: (){
-                    showDeleteUserModal(context, () {
-                      apiController.deleteUser(context,{"UserId":userInfo.userId,"AdminId":LocalStorage.ADMINID});
-                      setState(() {
 
-                      });
-                    });
-                    // showUserDetailModal(context,user: userInfo);
-                  },icon: Icon(Icons.delete_outline,color: Colors.red,),),
+                    showUserDetailModal(context,user: userInfo);
+                  },icon: Icon(Icons.details_outlined,color: Colors.green,),),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
-                child:IconButton(onPressed: (){
-                  // Create a new instance of the UserChatController
+              IconButton(
+                icon: Icon(Icons.group),
+                onPressed: () {
+                  apiController.findUserGroups(userInfo.userId!);
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Groups of ${userInfo.userName}'),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: apiController.userInGroupList
+                                .map(
+                                  (group) => ListTile(
+                                leading:     Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
+                                          color:Colors.green
+                                      ),
 
-                  showChatModal(context, userInfo.userName!,userInfo.userId!,"user");
-                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
+                                      image: DecorationImage(image: NetworkImage(group.groupPic))
+                                  ),
+                                ),
+                                title: Text(group.groupName),
+
+                                // subtitle: Text(group.),
+                              ),
+                            )
+                                .toList(),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              apiController.userInGroupList==[];
+                            },
+                            child: Text('Close'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -318,6 +347,8 @@ class _UserListPageState extends State<OnlineUserList> {
       ],
     );
   }
+
+
 }
 
 

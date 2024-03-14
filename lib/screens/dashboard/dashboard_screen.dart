@@ -38,7 +38,7 @@ final _width=MediaQuery.of(context).size.width;
 
               Header(),
               if (!Responsive.isMobile(context))
-              SingleChildScrollView(
+                  SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,7 +64,7 @@ final _width=MediaQuery.of(context).size.width;
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted Users"),
+                        child:FileInfoCard(info: apiController.mutedUserList.length,title: "InActive Users"),
 
                       )
                     ],
@@ -82,12 +82,14 @@ final _width=MediaQuery.of(context).size.width;
                           Container(
                             height: _height*0.30,
                             width: _width*0.40,
+                            padding: EdgeInsets.all(10),
                             child:FileInfoCard(info: apiController.userList.length,title: "Total User"),
 
                           ),
                           Container(
                             height: _height*0.30,
                             width: _width*0.40,
+                            padding: EdgeInsets.all(10),
                             child:FileInfoCard(info: apiController.groupList.length,title: "Total Group"),
 
                           ),
@@ -98,12 +100,14 @@ final _width=MediaQuery.of(context).size.width;
                         Container(
                           height: _height*0.30,
                           width: _width*0.40,
+                          padding: EdgeInsets.all(10),
                           child:FileInfoCard(info: apiController.temporaryOnlineUserList.length,title: "Online Users"),
 
                         ),
                         Container(
                           height: _height*0.30,
                           width: _width*0.40,
+                          padding: EdgeInsets.all(10),
                           child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted Users"),
 
                         )

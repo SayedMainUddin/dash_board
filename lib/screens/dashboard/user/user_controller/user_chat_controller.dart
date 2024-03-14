@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 List<double> itemHeights2 = [];
 List<MESSAGE> loadMsgTest = [];
 int globalIndex = 0;
@@ -20,6 +21,7 @@ const int iconColor = 0xFF8C93C7;
 enum MessageType { sent, received }
 class UserChatController extends GetxController{
   final socketController = Get.put(SocketController());
+  final TextEditingController replyController = TextEditingController();
   final scrollController=ScrollController();
   var message;
   DateTime d = DateTime.now();
@@ -38,17 +40,7 @@ class UserChatController extends GetxController{
   final isChatLoadComplete = false.obs;
   final isKeyPressed = false.obs;
   void loadReceiveData(data, loadmore) {
-    // final encryptedData = 'V1cR1/KX/YahRypjCAi34A==';
-    // final secretKey = '65bb785223571ee01f4a8dc4';
-    // final customIV = "yourcustomIV1234";
-    //
-    // try {
-    //   final decryptedData = decrypt(encryptedData, secretKey, customIV);
-    //   print('Decrypted: $decryptedData');
-    // } catch (error) {
-    //   // Handle the decryption error here
-    //   print('Decryption error: $error');
-    // }
+
     var json = jsonEncode(data);
     Map<String, dynamic> map = jsonDecode(json);
     if (map["SenderInfo"] == '' || map["SenderInfo"] == null) {
@@ -71,6 +63,7 @@ class UserChatController extends GetxController{
       var seenStatus = map['SeenStatus'];
       var chatType = map["UserType"];
       var msgReply = map["ReplyMsg"];
+      var messageStatus = map["MessageStatus"];
       var replyMessageType = map["ReplyMsgType"];
       var msgReplyId = map["ReplyMsgID"];
       var fileSize = map["FileSize"];
@@ -130,15 +123,20 @@ class UserChatController extends GetxController{
           seenValue: seenValue,
           showRunTime: showRunTime,
           isVisible: true,
-          dateHeading: dateAddInMsg);
+          dateHeading: dateAddInMsg,
+         messageStatus: messageStatus
 
-      if (loadmore == true) {
-        messages.insert(0,currentMessage);
+      );
 
-        isRuntimeMsg = false;
-      } else {
-        messages.insert(0, currentMessage);
-        isRuntimeMsg = false;
+      if(messageStatus!="InActive"){
+        if (loadmore == true) {
+          messages.insert(0,currentMessage);
+
+          isRuntimeMsg = false;
+        } else {
+          messages.insert(0, currentMessage);
+          isRuntimeMsg = false;
+        }
       }
       isChatLoadComplete.value = true;
     }
@@ -173,7 +171,7 @@ class UserChatController extends GetxController{
       var dlFileName = map["FileName"];
       var senderStatus = senderInfo[0]["AccountStatus"];
       var receiverStatus = map["Status"];
-
+      var messageStatus=map["MessageStatus"];
       var msgSenderNameFull = senderInfo[0]["FullName"];
       var seenStatus = map['SeenStatus'];
       //  //print(seenStatus);
@@ -245,14 +243,19 @@ class UserChatController extends GetxController{
           seenValue: seenValue,
           showRunTime: showRunTime,
           isVisible: true,
-          dateHeading: dateAddInMsg.value);
+          dateHeading: dateAddInMsg.value,
+        messageStatus: messageStatus
+      );
 
-      if (loadmore == true) {
-        messages.insert(0,currentMessage);
-        isRuntimeMsg = false;
-      } else {
-        messages.insert(0,currentMessage);
-        isRuntimeMsg = false;
+      if(messageStatus!="InActive"){
+        if (loadmore == true) {
+          messages.insert(0,currentMessage);
+          isRuntimeMsg = false;
+        } else {
+          messages.insert(0,currentMessage);
+          isRuntimeMsg = false;
+        }
+
       }
 
       isChatLoadComplete.value = true;
@@ -292,17 +295,17 @@ class UserChatController extends GetxController{
 // Listen for socket events
     socketController.socket.on('loadDataWeb' + LocalStorage.ADMINID, (data) {
       //print("load data: $data");
-
-      // Check if data has been processed already
-      if (!dataProcessed.value) {
-        // Process the data
-        for (var i = 0; i < data.length; i++) {
-          loadReceiveData(data[i], true);
-        }
-
-        // Set the flag to true to indicate that data has been processed
-        dataProcessed.value = true;
+      for (var i = 0; i < data.length; i++) {
+        loadReceiveData(data[i], true);
       }
+      // Check if data has been processed already
+      // if (!dataProcessed.value) {
+      //
+      //   for (var i = 0; i < data.length; i++) {
+      //     loadReceiveData(data[i], true);
+      //   }
+      //   dataProcessed.value = true;
+      // }
     });
   }
   void removechat(msgId,selectId,type) async {
@@ -327,13 +330,232 @@ class UserChatController extends GetxController{
       //showAlertSuccessDialog("Message deleted successfully.", context);
     }
   }
+  void handleSwipeReply({String? reply}) {
+    Get.back();
+    Get.snackbar(
+      "$reply",
+      "content",
+      backgroundColor: Colors.green.shade600,
+      duration: Duration(milliseconds: 1000),
+    );
+
+  }
+
+  void displayReplyBottomSheet( int index) {
+    DateTime d = DateTime.now();
+    String datetime = DateFormat('dd/MM/yyyy hh:mm a').format(d)
+        .toString()
+        .substring(10, 19);
+
+    Get.bottomSheet(
+      backgroundColor: Get.isDarkMode?Colors.black:Colors.white,
+      isDismissible: true,
+
+      Container(
+        height: Get.height*0.30,
+        padding: EdgeInsets.only(
+            left: 16.0, right: 16.0, top: 16.0, bottom: 0.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.blueGrey.withOpacity(0.70),
+                border: Border.all(
+                    color: Colors.blueGrey,
+                    width: 10
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+
+              ),
+              padding: EdgeInsets.all(10),
+              width: Get.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      "${LocalStorage.ADMINNAME}, ${datetime}",
+                      style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    //  constraints: BoxConstraints(maxWidth:Get.height * .6),
+                    padding: const EdgeInsets.only(
+                        top: 7.0,  bottom: 7, right: 10),
+                    child: Text(
+                      "${messages[index].messageText},",
+                      style:TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 15
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              decoration: BoxDecoration(
+                color: Get.isDarkMode?Colors.black:Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                      offset: Offset(0, 3),
+                      blurRadius: 5,
+                      color: Colors.grey)
+                ],
+
+              ),
+              width: Get.width,
+              constraints: BoxConstraints(maxHeight: 100),
+              child: Row(
+                children: [
+                  SizedBox(width: 10,),
+
+                  Expanded(
+                      child: SingleChildScrollView(
+                        child: TextField(
+                          controller: replyController,
+                          // expands: true,
+                          maxLines: 2,
+                          // enabled: true,
+                          minLines: 1,
+                          // focusNode: myFocusNode,
+                          decoration: InputDecoration(
+                              hintText: "Type reply message...",
+                              border: InputBorder.none,
+                          ),
+                          autofocus: false,
+                          style: TextStyle(
+                            color: Get.isDarkMode?Colors.white:Colors.black
+                          ),
+                          textInputAction: TextInputAction.done,
+                          textCapitalization: TextCapitalization.words,
+                          onSubmitted: (value) =>
+                              handleSwipeReply(reply: value),
+                        ),
+                      )
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(10.0),
+
+                    child: InkWell(
+                      child: Icon(
+                        Icons.send,
+                        color: Colors.indigoAccent,
+                      ),
+                      onTap: () {
+                        Get.back();
+                        userBlockStatus.value=="Yes"?
+                        Get.defaultDialog(
+                            actions: [
+
+                            ],
+                            content: Text('This user is blocked, First unblocked this user'),
+                            title: "Ops!"
+                        ):
+                        replyTextSend(
+                            messages[index].messageText,
+                            messages[index].id,
+                            messages[index].msgType,
+                            messages[index].fileSize
+
+                        );
+
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+  }
+  void replyTextSend(value, replyMsgId, replyMediaType, fileSize) {
+    //print(replyMediaType);
+    var msgType;
+    if (replyMediaType.toString().contains("reply")
+        || replyMediaType.toString().contains("File")
+        || replyMediaType.toString().contains("Video")
+        || replyMediaType.toString().contains("Audio") ||
+        replyMediaType.toString().contains("Image")) {
+      var lastFive;
+      if (replyMediaType
+          .toString()
+          .length > 5) {
+        lastFive = replyMediaType.toString().substring(replyMediaType
+            .toString()
+            .length - 5);
+      } else {
+        lastFive = replyMediaType.toString();
+      }
+
+      if (lastFive.contains('text')) {
+        msgType = 'reply' + 'text';
+      }
+
+      else {
+        msgType = 'reply ' + 'text';
+      }
+    }
+    else {
+      msgType = 'reply ' + replyMediaType;
+    }
+    DateTime d = DateTime.now();
+    String datetime = DateFormat('dd/MM/yyyy hh:mm a').format(d);
+    var msgReceiverType = selectedType.value;
+    var message = replyController.text;
+    replyController.clear();
+    if (message != "") {
+      var ownuserUnique = LocalStorage.ADMINID;
+      var userNMsg = message.trim();
+      var fileName = "";
+      var sentTo = selectedId.value;
+      var timeStamp = datetime;
+      var orginalMsg = value;
+      var orginalMsgId = replyMsgId;
+
+      Map data = {
+        "UserId": ownuserUnique,
+        "SelectId": sentTo,
+        "Message": userNMsg,
+        "MsgType": msgType,
+        "FileName": fileName,
+        "FileSize": fileSize,
+        "UserType": msgReceiverType,
+        "OrginalMsgType": replyMediaType,
+        "OrginalMsg": orginalMsg,
+        "OrginalMsgId": orginalMsgId,
+      };
+      socketController.socket.emit('sentReplyMsg', data);
+      scrollController.position.maxScrollExtent;
+      Get.back();
+    } else {
+      //print("Are You Crazy");
+    }
+  }
   showMultitaskPOPUPDialog(String message, int index, BuildContext context) {
     Widget clickButton = Container(
-      height: 100,
-      width: 200,
+      height: Get.height*0.20,
+      width: Get.width*0.10,
       alignment: Alignment.center,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           messages[index].msgType.toString().contains('Image') ||
@@ -350,7 +572,11 @@ class UserChatController extends GetxController{
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Copy'),
+              child: Text('Copy',
+              style: TextStyle(
+                color:Get.isDarkMode? Colors.white:Colors.black,
+
+              ),),
             ),
           ),
 
@@ -374,7 +600,10 @@ class UserChatController extends GetxController{
           InkWell(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Remove'),
+              child: Text('Remove',style: TextStyle(
+                color:Get.isDarkMode? Colors.white:Colors.black,
+
+              ),),
             ),
             onTap: () {
               Navigator.pop(context);
@@ -407,6 +636,51 @@ class UserChatController extends GetxController{
                         ],
                       ));
             },
+          ),
+          Divider(
+            height: 1,
+          ),
+
+          InkWell(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('reply',style: TextStyle(
+                color:Get.isDarkMode? Colors.white:Colors.black,
+
+              ),),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              showDialog(
+                  context: context,
+                  builder: (context) =>
+                      AlertDialog(
+                        title: Text('Are you sure?'),
+                        content: Text('Do you want to reply this message?'),
+                        actions: <Widget>[
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              }, //  We can return any object from here
+                              child: Text('NO')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+
+                                if (messages[index].dateHeading == true &&
+                                    index != 0) {
+                                  if (messages[index - 1].dateHeading != true) {                                        messages[index - 1].dateHeading = true;
+                                  messages[index - 1].dateHeading = true;
+                                  }
+                                }
+                               // removechat(messages[index].id.toString(),selectedId.value,selectedType.value);
+                                displayReplyBottomSheet(index);
+                               // messages.removeAt(index);
+                              }, //  We can return any object from here
+                              child: Text('YES'))
+                        ],
+                      ));
+            },
           )
 
         ],
@@ -415,7 +689,7 @@ class UserChatController extends GetxController{
     // configura o  AlertDialog
     AlertDialog alertDialog = AlertDialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 50),
-      backgroundColor: Colors.white,
+      backgroundColor:Get.isDarkMode?Colors.black: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(
@@ -440,7 +714,59 @@ class UserChatController extends GetxController{
       },
     );
   }
-
+  loadNetworkImageForGroup(imageList) {
+    bool fileExists = false;
+    var groupImage = imageList.split("GroupImage:");
+    for (var i = 1; i < groupImage.length; i++) {
+      String path = groupImage[i]
+          .toString()
+          .substring(groupImage[i].toString().indexOf('ImageData/') + 10);
+      fileExists = File('/storage/emulated/0/AslChat/' + path).existsSync();
+    }
+    return fileExists;
+  }
+  saveGroupImage(imageList) {
+    var groupImage = imageList.split("GroupImage:");
+    for (var i = 1; i < groupImage.length; i++) {
+      checkImageSave(groupImage[i], "Image");
+    }
+  }
+  void saveMediaToLocalStorage(imgUrl, name, msgType) async {
+    // bool downloaded = await saveMedia(imgUrl, name, msgType);
+    // if (downloaded) {
+    //   //print('image successfully downloaded');
+    // } else {
+    //   //print("Problem Downloading File");
+    // }
+  }
+  checkImageSave(normalImage, msgType) {
+    print(normalImage);
+    var fileNameDemo;
+    if (msgType == "Image") {
+      fileNameDemo = normalImage
+          .toString()
+          .substring(normalImage.toString().indexOf('ImageData/') + 10);
+      var imgUrl =
+          "${WebApi.basesUrl}" + normalImage.toString().substring(2);
+      saveMediaToLocalStorage(imgUrl, fileNameDemo, msgType);
+    }
+    else if (msgType == "Audio") {
+      fileNameDemo = normalImage
+          .toString()
+          .substring(normalImage.toString().indexOf('VoiceData/') + 10);
+      var imgUrl =
+          "${WebApi.basesUrl}" + normalImage.toString().substring(2);
+      saveMediaToLocalStorage(imgUrl, fileNameDemo, msgType);
+    }
+    else if (msgType == "File") {
+      fileNameDemo = normalImage
+          .toString()
+          .substring(normalImage.toString().indexOf('File/') + 10);
+      var imgUrl =
+          "${WebApi.basesUrl}" + normalImage.toString().substring(2);
+      saveMediaToLocalStorage(imgUrl, fileNameDemo, msgType);
+    }
+  }
   @override
   Future<void> onInit() async {
     // TODO: implement onInit
@@ -600,6 +926,16 @@ class UserChatController extends GetxController{
         //print('Group chat ');
       }
     });
+    if(selectedType.value=='Group'){
+      socketController.socket.on("msgDeleteSuccess${selectedId.value}", (data){
+        messages.removeWhere((message) => message.id == data);
+      });
+    }else {
+      socketController.socket.on(
+          "msgDeleteSuccess${LocalStorage.ADMINID}", (data) {
+        messages.removeWhere((message) => message.id == data);
+      });
+    }
   }
   @override
   void onClose() {

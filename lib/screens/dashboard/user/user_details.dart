@@ -40,8 +40,12 @@ class _UserDetailModalState extends State<UserDetailModal> {
           padding: EdgeInsets.all(16.0),
           width: MediaQuery.of(context).size.width*0.40,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:Get.isDarkMode?Colors.black: Colors.white,
             borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(
+              color:Get.isDarkMode? Colors.white:Colors.black,
+
+            )
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -54,12 +58,14 @@ class _UserDetailModalState extends State<UserDetailModal> {
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black
+                      color:Get.isDarkMode? Colors.white:Colors.black,
+
                     ),
                   ),
                   IconButton(onPressed: (){
                     Get.back();
-                  }, icon: Icon(Icons.close))
+                  }, icon: Icon(Icons.close,
+                  color: Colors.red,))
                 ],
               ),
               SizedBox(height: 16.0),
@@ -87,7 +93,7 @@ class _UserDetailModalState extends State<UserDetailModal> {
   _userWidget(fieldName,fieldValue){
     return Container(
       width: Get.width,
-      height: Get.height*0.06,
+     // height: Get.height*0.06,
       child: Column(
         children: [
           Row(
@@ -95,13 +101,15 @@ class _UserDetailModalState extends State<UserDetailModal> {
              Container(
                width: Get.width*0.10,
                child:  Text(fieldName,style: TextStyle(
-                   color: Colors.black,
+                   color:Get.isDarkMode? Colors.white:Colors.black,
+
                    fontSize: 16
                ),),
              ),
               SizedBox(width: 20,),
               Text(fieldValue,style: TextStyle(
-                  color: Colors.black,
+                  color:Get.isDarkMode? Colors.white:Colors.black,
+
                   fontSize: 16
               ),),
             ],

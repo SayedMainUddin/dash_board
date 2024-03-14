@@ -56,10 +56,19 @@ GroupController gc=Get.put(GroupController(),permanent: true);
                   ),
                 ),
 
-                title: Text("Select Members", style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold,
-                  color: Get.isDarkMode ? Colors.white : Colors.black,
-                ),),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    Text("Select Members", style: TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold,
+                      color: Get.isDarkMode ? Colors.white : Colors.black,
+                    ),),
+                    IconButton(onPressed: (){
+                      Get.back();
+                    }, icon: Icon(Icons.highlight_remove_rounded,color: Colors.red,))
+                  ],
+                ),
                 centerTitle: true,
                 automaticallyImplyLeading: false,
                 backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
@@ -264,7 +273,7 @@ class AvatarCard extends StatelessWidget {
                   radius: 11,
                   child: Icon(
                     Icons.clear,
-                    color: Colors.black,
+                    color:Get.isDarkMode? Colors.white:Colors.black,
                     size: 13,
                   ),
                 ),
@@ -278,7 +287,8 @@ class AvatarCard extends StatelessWidget {
             chatModel!.userName!,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.black
+              color:Get.isDarkMode? Colors.white:Colors.black,
+
             ),
           ),
         ],
@@ -300,7 +310,7 @@ class ButtonCard extends StatelessWidget {
         child: Icon(
           icon,
           size: 26,
-          color: Colors.white,
+          color:Get.isDarkMode? Colors.white:Colors.black,
         ),
         backgroundColor: Color(0xFF25D366),
       ),
@@ -309,7 +319,7 @@ class ButtonCard extends StatelessWidget {
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
-          color: Colors.black
+          color:Get.isDarkMode? Colors.white:Colors.black,
         ),
       ),
     );
@@ -366,7 +376,7 @@ class ContactCard extends StatelessWidget {
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
-          color: Colors.black
+          color:Get.isDarkMode? Colors.white:Colors.black,
         ),
       ),
     );

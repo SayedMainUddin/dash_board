@@ -78,6 +78,24 @@ class GroupActivityController extends GetxController {
     }
     update();
   }
+  getFilteredGroupActivity(value) {
+    print(activityList.length);
+    List<Activity> newUser=activityList;
+    final query = value.toLowerCase();
+    newUser= activityList
+        .where((user) =>
+    user.activityType!.toLowerCase().contains(query)||
+        user.senderName!.toLowerCase().contains(query)||
+        user.receiverName!.toLowerCase().contains(query)||
+        user.activityDetails!.toLowerCase().contains(query)||
+        user.actionDate!.toLowerCase().contains(query)
+    )
+        .toList();
+    activityList.value=newUser;
+    if(value==''){
+      fetchActivity();
+    }
+  }
   @override
   void onInit() {
     // TODO: implement onInit

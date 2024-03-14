@@ -1,6 +1,7 @@
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/activity.dart';
 import 'package:dash_board/models/notice.dart';
+import 'package:dash_board/screens/dashboard/user/user_controller/user_chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -24,6 +25,11 @@ class UserActivityController extends GetxController {
 
 
 
+  String? getUserNameById(String id) {
+    User? user = apiController.userList.firstWhere((user) => user.userId == id, orElse: () => User(userId: id, userName: 'Unknown'));
+    return user.userName;
+  }
+
 
   fetchActivity() async {
 
@@ -40,33 +46,28 @@ class UserActivityController extends GetxController {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-
+        print(data);
         if (data != null && data.isNotEmpty) {
           List<Activity>    activities = data.map((json) => Activity.fromJson(json)).toList();
           activityList.value=activities;
+          for (Activity activity in activityList) {
+            String? sender = getUserNameById(activity.senderId!);
+            String? receiver = getUserNameById(activity.receiverId!);
+              activity.senderName = sender =="Unknown"?  LocalStorage.ADMINNAME:sender;
+              activity.receiverName = receiver =="Unknown"? LocalStorage.ADMINNAME:receiver;
+            print('Sender: $sender, Receiver: $receiver');
+          }
+          // for (Activity activity in activityList) {
+          //   User? sender = apiController.userList.firstWhere((user) => user.userId == activity.senderId);
+          //   User? receiver = apiController.userList.firstWhere((user) => user.userId == activity.receiverId);
+          //   activity.senderName = sender != null ? sender.userName : 'Unknown';
+          //   activity.receiverName = receiver != null ? receiver.userName : 'Unknown';
+          //   print(sender);
+          // }
+          //activityList.value=activityList;
+         // print(activityList);
         }
-        // List<Notice> allNotices = data.map((json) => Notice.fromJson(json)).toList();
-        // notices.value=allNotices;
-        // var groupActivityData=activityList;
-        // var groupData=apiController.groupList;
-        //
-        // Map<String, String> groupIdToNameMap = {};
-        //
-        // // Create a map from groupId to groupName
-        // groupData.forEach((group) {
-        //   groupIdToNameMap[group.id] = group.groupName;
-        // });
-        //
-        // // Match groupId from groupActivityData to get the groupName
-        // groupActivityData.forEach((activity) {
-        //   String groupId = activity.groupId!;
-        //   if (groupIdToNameMap.containsKey(groupId)) {
-        //     String? groupName = groupIdToNameMap[groupId];
-        //     print("Activity '${activity.activityDetails}' belongs to group '$groupName'");
-        //   } else {
-        //     print("No group found for activity '${activity.activityDetails}'");
-        //   }
-        // });
+
       } else {
         throw Exception('Failed to load data');
       }
@@ -77,6 +78,24 @@ class UserActivityController extends GetxController {
       // Handle errors here
     }
     update();
+  }
+  getFilteredUserActivity(value) {
+    print(activityList.length);
+    List<Activity> newUser=activityList;
+    final query = value.toLowerCase();
+    newUser= activityList
+        .where((user) =>
+    user.activityType!.toLowerCase().contains(query)||
+        user.senderName!.toLowerCase().contains(query)||
+        user.receiverName!.toLowerCase().contains(query)||
+        user.activityDetails!.toLowerCase().contains(query)||
+        user.actionDate!.toLowerCase().contains(query)
+    )
+        .toList();
+    activityList.value=newUser;
+    if(value==''){
+      fetchActivity();
+    }
   }
   @override
   void onInit() {

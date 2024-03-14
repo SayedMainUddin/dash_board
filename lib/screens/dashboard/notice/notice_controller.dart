@@ -97,6 +97,24 @@ class NoticeController extends GetxController {
     }
     update();
   }
+  getFilteredNotice(value) {
+    print(notices.length);
+    List<Notice> newUser=notices;
+    final query = value.toLowerCase();
+    newUser= notices
+        .where((user) =>
+    user.noticeTitle!.toLowerCase().contains(query) ||
+        user.creatingDate.toString().toLowerCase().contains(query)||
+        user.noticeDescription.toString().toLowerCase().contains(query)||
+        user.noticeDeadLine.toString().toLowerCase().contains(query)
+
+    )
+        .toList();
+    notices.value=newUser;
+    if(value==''){
+      fetchNotices();
+    }
+  }
   @override
   void onInit() {
     // TODO: implement onInit
