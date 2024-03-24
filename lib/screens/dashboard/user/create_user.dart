@@ -139,49 +139,49 @@ class _CreateUserModalState extends State<CreateUserModal> {
               TextField(
                 controller: firstnameController,
                 style: TextStyle(
-                    color: Colors.black
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'First Name'),
               ),
               TextField(
                 controller: lastnameController,
                 style: TextStyle(
-                    color: Colors.black
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'Last Name'),
               ),
               TextField(
                 controller: userNameController,
                 style: TextStyle(
-                    color: Colors.black
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'Username'),
               ),
               TextField(
                 controller: emailController,
                 style: TextStyle(
-                    color: Colors.black
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'Email'),
               ),
               TextField(
                 controller: mobileController,
                 style: TextStyle(
-                    color: Colors.black,
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'Contact Number'),
               ),
               TextField(
                 controller: addressController,
                 style: TextStyle(
-                    color: Colors.black
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'Address'),
               ),
               TextField(
                 controller: passwordController,
                 style: TextStyle(
-                    color: Colors.black
+                    color:Get.isDarkMode?Colors.white: Colors.black
                 ),
                 decoration: InputDecoration(labelText: 'Password'),
               ),
@@ -206,7 +206,9 @@ class _CreateUserModalState extends State<CreateUserModal> {
                       },
                     ),
                   ),
-                  icon: Icon(Icons.date_range,color: Colors.black54,),
+                  icon: Icon(Icons.date_range,
+                    color: Get.isDarkMode?Colors.white: Colors.black
+                  ),
                   //icon image
                   label: Text(
                     "Date Of Birth:" + selectedDate.toString().split(' ')[0],
@@ -238,7 +240,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
               Divider(),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black45,
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(10)
                 ),
                 child: Row(
@@ -281,10 +283,11 @@ class _CreateUserModalState extends State<CreateUserModal> {
                   encrypt("sayedmainuddin");
                   final DateFormat formatter = DateFormat('dd/MM/yyyy');
                   final String formattedDate = formatter.format(selectedDate);
-                  if(selectedDepartment!.name==''){
-                    setState(() {
-                      selectedDepartment!.name=="General";
-                    });
+                  if(selectedDepartment!.name==''||selectedDepartment!.name==null||selectedDepartment!.name.isEmpty||userNameController.text==''||firstnameController.text==''||selectedDate==''||emailController.text==''||mobileController.text==''){
+                    showAlerDialog("Warning!", "You have to select department.");
+                    // setState(() {
+                    //   selectedDepartment!.name=="General";
+                    // });
                   }
                   if(emailController.text==''&& passwordController.text==''){
                     showAlerDialog("Worning!", "Email and Password required!");

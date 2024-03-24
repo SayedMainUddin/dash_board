@@ -54,6 +54,7 @@ dependencies:
   image_downloader_web: ^2.0.4
   encrypt: ^5.0.3
   pointycastle: ^3.7.4
+  tutorial_coach_mark: ^1.2.11
 
 dev_dependencies:
   flutter_test:

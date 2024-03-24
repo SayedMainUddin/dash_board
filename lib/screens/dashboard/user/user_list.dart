@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:dash_board/controllers/MenuAppController.dart';
 import 'package:dash_board/controllers/api_controller.dart';
 import 'package:dash_board/models/Groups.dart';
@@ -18,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../../../../constants.dart';
 
 
@@ -48,10 +51,16 @@ class _UserListPageState extends State<UserListPage> {
     });
   }
 
+
+
   void initState() {
     super.initState();
+    print(apiController.departmentList.length);
     _fetchUserData();
     _fetchGroupData();
+    // createTutorial();
+    // apiController.userList.isEmpty?
+    // showTutorial():null;
 
   }
   List<String> sortingOptions = [
@@ -109,9 +118,9 @@ class _UserListPageState extends State<UserListPage> {
       return 0;
     });
   }
-
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
@@ -149,7 +158,8 @@ class _UserListPageState extends State<UserListPage> {
                    apiController.getFilteredUsers(value);
                   },
                 ),
-              ):Container(
+              ):
+              Container(
                 width: 50,
                 height: 20,
                 child: SearchBar(
@@ -228,6 +238,7 @@ class _UserListPageState extends State<UserListPage> {
                     defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
                   ),
                 ),
+                //key: keyButton,
                 onPressed: () {
                   showCreateUserModal(context);
                 },
@@ -236,7 +247,7 @@ class _UserListPageState extends State<UserListPage> {
               ),
             ],
           ),
-          SizedBox(
+          Obx(() => SizedBox(
             width: double.infinity,
             child: DataTable(
               columnSpacing: defaultPadding,
@@ -271,14 +282,12 @@ class _UserListPageState extends State<UserListPage> {
                     (index) => recentFileDataRow(context,controller.userList[index]),
               ),
             ),
-          ),
+          ))
 
         ],
       );}),
     );
   }
-
-
   DataRow recentFileDataRow(BuildContext context, User userInfo) {
     ApiController apiController =Get.put(ApiController());
     return DataRow(

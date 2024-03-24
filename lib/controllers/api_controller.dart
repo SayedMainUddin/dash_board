@@ -91,7 +91,8 @@ class ApiController extends GetxController {
   void toggleTheme() {
     Get.changeTheme(Get.isDarkMode? ThemeData.light(): ThemeData.dark());
   }
-
+///
+  /// InApp Tour
   ///create department
   Future<Map<String, dynamic>> createDepartment(String departmentName) async {
     final url = Uri.parse('${WebApi.basesUrl}/api/departments');
@@ -199,10 +200,11 @@ class ApiController extends GetxController {
     if (response.statusCode == 200) {
       print('user created: ${response.body}');
       await fetchUsers({"AdminId":LocalStorage.ADMINID});
+      update();
+
     } else {
       throw Exception('Failed to load data');
     }
-    update();
   }
   Future<void> updateUser(Map<String, dynamic> data) async {
     final response = await http.post(Uri.parse('${WebApi.basesUrl}/updateUserByAdmin'),

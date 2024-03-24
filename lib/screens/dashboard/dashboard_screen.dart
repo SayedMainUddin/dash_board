@@ -149,13 +149,16 @@ final _width=MediaQuery.of(context).size.width;
                 final selectedItem = menuAppController.selectedItem.value;
 
                 switch (selectedItem) {
+
                   case MenuItem.dashboard:
-                    return  Column(
+                    return
+                    Column(
                       children: [
                         //  SizedBox(height: defaultPadding),
-                        UserListPage(),
+                       UserListPage()
 
                       ],
+
                     );
                   case MenuItem.groupList:
                   // Replace with NotificationListPage()
