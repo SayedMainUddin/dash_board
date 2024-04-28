@@ -64,16 +64,16 @@ class _UserListPageState extends State<UserListPage> {
 
   }
   List<String> sortingOptions = [
-    'Sorting',
+    'Sort',
     'Department',
-    'Time',
+    'Enrolled',
     'DOB',
     'Name',
     'Email',
     'Mobile',
   ];
 
-  String selectedSortingOption = 'Sorting';
+  String selectedSortingOption = 'Sort';
   bool isAscending = true;
 
   Future<void> _fetchUserData() async {
@@ -90,7 +90,7 @@ class _UserListPageState extends State<UserListPage> {
           return isAscending
               ? a.userDepartment!.compareTo(b.userDepartment!)
               : b.userDepartment!.compareTo(a.userDepartment!);
-        case 'Time':
+        case 'Enrolled':
           return isAscending
               ? a.time!.compareTo(b.time!)
               : b.time!.compareTo(a.time!);
@@ -139,7 +139,7 @@ class _UserListPageState extends State<UserListPage> {
               Row(
                 children: [
                   Text(
-                    "Users List",
+                    "Users",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   IconButton(onPressed: (){
@@ -151,7 +151,7 @@ class _UserListPageState extends State<UserListPage> {
                 width: 250,
                 height: 30,
                 child: SearchBar(
-                 hintText: "Search user by any",
+                 hintText: "Search",
                   leading: Icon(Icons.search),
                   //onChanged: apiController.setSearchQuery,
                   onChanged: (String? value){
@@ -163,7 +163,7 @@ class _UserListPageState extends State<UserListPage> {
                 width: 50,
                 height: 20,
                 child: SearchBar(
-                  hintText: "Search user by any",
+                  hintText: "Search",
                   leading: Icon(Icons.search),
                   //onChanged: apiController.setSearchQuery,
                   onChanged: (String? value){
@@ -204,7 +204,8 @@ class _UserListPageState extends State<UserListPage> {
                 ),
               ):Container(),
 
-              !Responsive.isMobile(context)? IconButton(
+              !Responsive.isMobile(context)?
+              IconButton(
                 icon: Icon(Icons.sort),
                 onPressed: () {
                   setState(() {
@@ -213,7 +214,8 @@ class _UserListPageState extends State<UserListPage> {
                   });
                 },
               ):Container(),
-              selectedUsers.length>0? Padding(
+              selectedUsers.length>0?
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:Row(
                   children: [
@@ -243,7 +245,7 @@ class _UserListPageState extends State<UserListPage> {
                   showCreateUserModal(context);
                 },
                 icon: Icon(Icons.add),
-                label: Text("Create User"),
+                label: Text("Add User"),
               ),
             ],
           ),
@@ -335,10 +337,10 @@ class _UserListPageState extends State<UserListPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: Text(userInfo.userName!,overflow: TextOverflow.ellipsis,style:
-                    TextStyle(
-                     // color: Colors.green
-                     // color: userInfo.isOnline=="true"?Colors.green:Colors.black
-                    ),),
+                  TextStyle(
+                    // color: Colors.green
+                    // color: userInfo.isOnline=="true"?Colors.green:Colors.black
+                  ),),
                 ),
               ],
             ),
@@ -361,7 +363,9 @@ class _UserListPageState extends State<UserListPage> {
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:           IconButton(onPressed: (){
                   showUserEditModal(context,user: userInfo);
-                },icon: Icon(Icons.edit_document,color: Colors.green,),),
+                },icon: Icon(Icons.edit_document,color: Colors.green,),
+                  tooltip: "Edit user details"
+                  ,),
               ),
               userInfo.status=="Active"?Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
@@ -371,7 +375,8 @@ class _UserListPageState extends State<UserListPage> {
 
                   });
 
-                },icon: Icon(Icons.stop_circle_outlined,color: Colors.red,),),
+                },icon: Icon(Icons.stop_circle_outlined,color: Colors.red,),
+                    tooltip: "Mute user"),
               ):
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
@@ -382,7 +387,8 @@ class _UserListPageState extends State<UserListPage> {
 
                   });
 
-                },icon: Icon(Icons.airplanemode_active,color: Colors.deepOrange,),),
+                },icon: Icon(Icons.airplanemode_active,color: Colors.deepOrange,),
+                    tooltip: "Active user"),
               ),
               // Padding(
               //   padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
@@ -401,18 +407,21 @@ class _UserListPageState extends State<UserListPage> {
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:IconButton(onPressed: (){
                   showChatModal(context, userInfo.userName!,userInfo.userId!,"user");
-                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
+                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),
+                  tooltip: "Send message",),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child: IconButton(
                   onPressed: (){
 
-                   showUserDetailModal(context,user: userInfo);
-                },icon: Icon(Icons.details_outlined,color: Colors.green,),),
+                    showUserDetailModal(context,user: userInfo);
+                  },icon: Icon(Icons.details_outlined,color: Colors.green,),
+                  tooltip: "User details",),
               ),
               IconButton(
                 icon: Icon(Icons.group),
+                tooltip: "User in groups",
                 onPressed: () {
                   apiController.findUserGroups(userInfo.userId!);
                   showDialog(
@@ -427,21 +436,21 @@ class _UserListPageState extends State<UserListPage> {
                             children: apiController.userInGroupList
                                 .map(
                                   (group) => ListTile(
-                                    leading:     Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(50),
-                                          border: Border.all(
-                                              color:Colors.green
-                                          ),
-
-                                          image: DecorationImage(image: NetworkImage(group.groupPic))
+                                leading:     Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
+                                          color:Colors.green
                                       ),
-                                    ),
+
+                                      image: DecorationImage(image: NetworkImage(group.groupPic))
+                                  ),
+                                ),
                                 title: Text(group.groupName),
 
-                               // subtitle: Text(group.),
+                                // subtitle: Text(group.),
                               ),
                             )
                                 .toList(),
@@ -451,7 +460,7 @@ class _UserListPageState extends State<UserListPage> {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                             apiController.userInGroupList==[];
+                              apiController.userInGroupList==[];
                             },
                             child: Text('Close'),
                           ),

@@ -147,7 +147,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
                 Row(
                   children: [
                     Text(
-                      "Department List",
+                      "Departments",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     IconButton(

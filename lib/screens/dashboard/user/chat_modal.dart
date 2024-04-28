@@ -153,7 +153,7 @@ class _ChatModalState extends State<ChatModal> {
       // typeFile = 'image/SVG/file-file-format.svg';
       typeFile = "assets/fileType/defaultFile.png";
     }
-  return  Card(
+    return  Card(
         color: Colors.white60,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -195,7 +195,7 @@ class _ChatModalState extends State<ChatModal> {
                   child: Text("[.${selectedFileResult!.names.toString().split(".").last}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 13,
+                      fontSize: 13,
                       color:Get.isDarkMode? Colors.white:Colors.black,
 
                     ),
@@ -289,17 +289,17 @@ class _ChatModalState extends State<ChatModal> {
 
 
 
-            setState(() {
-              isSentFile=false;
+          setState(() {
+            isSentFile=false;
 
-            });
-         // Get.back();
+          });
+          // Get.back();
           //   Get.back();
           //  toggleSuccess(context, "File sent successfully!");
         }
       }
     }else{
-     Get.back();
+      Get.back();
     }
   }
   Future<void> sendImageToServer() async {
@@ -345,13 +345,13 @@ class _ChatModalState extends State<ChatModal> {
           });
 
 
-            setState(() {
-              isSentImage=false;
+          setState(() {
+            isSentImage=false;
 
-            });
+          });
           //Get.back();
-       //   Get.back();
-        //  toggleSuccess(context, "File sent successfully!");
+          //   Get.back();
+          //  toggleSuccess(context, "File sent successfully!");
         }
       }
     }
@@ -424,23 +424,25 @@ class _ChatModalState extends State<ChatModal> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    //userChatController.messages.value=[];
     userChatController.selectedId.value=widget.selectedId!;
     userChatController.selectedType.value="user";
     userChatController.ChatScreenPageReady(widget.selectedId!,"user");
 
 
   }
-@override
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     qualityController.dispose();
+    //userChatController.messages.value=[];
     socketController.socket.off("loadAllChat");
     socketController.socket.off("loadData");
   }
   @override
   Widget build(BuildContext context) {
-   // Get.lazyPut(()=>UserChatController());
+    // Get.lazyPut(()=>UserChatController());
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -453,9 +455,9 @@ class _ChatModalState extends State<ChatModal> {
         width: MediaQuery.of(context).size.width*0.40,
         height: MediaQuery.of(context).size.width*0.40,
         decoration: BoxDecoration(
-          color:Get.isDarkMode?Colors.black: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: Get.isDarkMode?Colors.white:Colors.black)
+            color:Get.isDarkMode?Colors.black: Colors.white,
+            borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(color: Get.isDarkMode?Colors.white:Colors.black)
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -476,12 +478,13 @@ class _ChatModalState extends State<ChatModal> {
                   ),
                 ),
                 IconButton(onPressed: (){
-                 //Get.to(()=>MyApp());
                   Navigator.pop(Get.context!);
                   userChatController.dataProcessed.value=false;
+                  socketController.socket.off('loadDataWeb' + LocalStorage.ADMINID);
                 }, icon: Icon(Icons.disabled_by_default_outlined,
                   color:Get.isDarkMode? Colors.white:Colors.black,
-                ))
+                )
+                )
               ],
             ),
             Row(
@@ -501,27 +504,28 @@ class _ChatModalState extends State<ChatModal> {
             //       child: CircularProgressIndicator(),
             //     ):
             Obx(() =>    Expanded(
-           child: ListView.builder(
-             itemCount: userChatController.messages.length,
-             reverse: true,
-             itemBuilder: (context, index) {
-               if (index < userChatController.messages.length ) {
-                 return InkWell(
-                   onLongPress: (){
-                     userChatController.showMultitaskPOPUPDialog('',index,context);
-                   },
-                   child: MessageWidget(
-                     i: index,
-                     scrollController: userChatController.scrollController,
-                   ),
-                 );
-               }
-               // You might want to return an empty container or null if the condition is not met.
-               return Container();
-               
-             }
-           ),
-         ),),
+              child: ListView.builder(
+                  itemCount: userChatController.messages.length,
+                  reverse: true,
+                  itemBuilder: (context, index) {
+
+                    if (index < userChatController.messages.length ) {
+                      return InkWell(
+                        onLongPress: (){
+                          userChatController.showMultitaskPOPUPDialog('',index,context);
+                        },
+                        child: MessageWidget(
+                          i: index,
+                          scrollController: userChatController.scrollController,
+                        ),
+                      );
+                    }
+                    // You might want to return an empty container or null if the condition is not met.
+                    return Container();
+
+                  }
+              ),
+            ),),
             if(isSentFile==true||isSentImage==true)
 
               if (isImage)
@@ -538,13 +542,13 @@ class _ChatModalState extends State<ChatModal> {
                   child: SfPdfViewer.memory(
                       fileBytes!),
                 ),
-                Row(
+            Row(
               children: [
                 IconButton(
                   icon: Icon(Icons.attach_file,color: Colors.teal,),
                   onPressed: () {
                     // pickImage();
-                   pickAndPreviewFile('File');
+                    pickAndPreviewFile('File');
                   },
                 ),
                 IconButton(
@@ -553,17 +557,17 @@ class _ChatModalState extends State<ChatModal> {
                     pickAndPreviewFile('Image');
 
                     //  onImageButtonPressed(
-                   //    ImageSource.gallery, "Image", "", "", "",
-                   //    context: context,);
+                    //    ImageSource.gallery, "Image", "", "", "",
+                    //    context: context,);
                   },
                 ),
                 isSentFile||isSentImage?
-              //  fileBytes != null?
+                //  fileBytes != null?
                 Expanded(
-                  child: Text("Send file to user",
-                  style: TextStyle(
-                    color: Colors.green
-                  ),)
+                    child: Text("Send file to user",
+                      style: TextStyle(
+                          color: Colors.green
+                      ),)
                 ):
                 Expanded(
                   child: RawKeyboardListener(

@@ -18,7 +18,65 @@ class FileInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
+      child:
+      info>0&&title=="Muted User"?
+      Container(
+        padding: EdgeInsets.all(defaultPadding),
+        decoration: BoxDecoration(
+          color: Color(0xff1B3F4BFF),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  //  padding: EdgeInsets.all(defaultPadding * 0.75),
+                    height: 70,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: Get.isDarkMode?Colors.red:Colors.red,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                        Icons.people_outline,
+                        color: Get.isDarkMode?Colors.white:Colors.white
+                    )
+                ),
+                //  Icon(Icons.more_vert, color: Colors.white54)
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "${title} ",
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 22,
+                  color: Get.isDarkMode?Colors.red:Colors.red
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              "${info.toString()}",
+              style: TextStyle(
+                  color: Get.isDarkMode?Colors.red:Colors.red,
+                  fontSize: 22
+              ),
+            ),
+          ],
+        ),
+      ):
+        Container(
         padding: EdgeInsets.all(defaultPadding),
         decoration: BoxDecoration(
           color: Color(0xff1B3F4BFF),
@@ -55,7 +113,7 @@ class FileInfoCard extends StatelessWidget {
               height: 10,
             ),
             Text(
-              "${title} : ",
+              "${title} ",
               maxLines: 1,
               textAlign: TextAlign.center,
               style: TextStyle(

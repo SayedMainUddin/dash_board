@@ -40,7 +40,7 @@ class _UserListPopupState extends State<UserListPopup> {
           children: [
             TextField(
               controller: searchController,
-              decoration: InputDecoration(labelText: 'Search by name'),
+              decoration: InputDecoration(labelText: 'Search'),
               onChanged: (String value) {
                 // Filter the user list based on the search input
                 setState(() {
@@ -250,18 +250,24 @@ class DepartmentListTable extends StatelessWidget {
                 DataCell(Text(department.departmentHead??"")),
               //  DataCell(Text(departmentCounts[department.name].toString())),
                 DataCell(
-                  ElevatedButton(
-                    onPressed: () {
-                      showUsersByDepartment(context, department.name);
-                    },
-                    child: Text(departmentCounts[department.name].toString())
-                  ),
+                  Tooltip(
+                    message: "Show users in this department",
+            child:  ElevatedButton(
+              onPressed: () {
+                showUsersByDepartment(context, department.name);
+              },
+              child: Text(departmentCounts[department.name].toString()),
+
+            ),
+            )
+
                 ),
                 DataCell(
                     Row(
                       children: [
                         IconButton(
                           icon: Icon(Icons.edit,color: Colors.green,),
+                          tooltip: "Make department head",
                           onPressed: () async {
                             // Fetch the user list (replace this with your logic to fetch the user list)
                             await   apiController.fetchUsers({"AdminId": LocalStorage.ADMINID});
@@ -276,6 +282,7 @@ class DepartmentListTable extends StatelessWidget {
                         IconButton(
                           icon: Icon(Icons.delete,
                           color: Colors.red,),
+                          tooltip: "Remove department",
                           onPressed: () {
                             showDeleteConfirmationDialog(context, department.id);
                           },

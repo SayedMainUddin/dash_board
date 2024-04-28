@@ -46,25 +46,25 @@ final _width=MediaQuery.of(context).size.width;
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.userList.length,title: "Total User"),
+                        child:FileInfoCard(info: apiController.userList.length,title: "User"),
 
                       ),
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.groupList.length,title: "Total Group"),
+                        child:FileInfoCard(info: apiController.groupList.length,title: "Group"),
 
                       ),
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online Users"),
+                        child:FileInfoCard(info: apiController.onlineUserList.length,title: "Online User"),
 
                       ),
                       Container(
                         height: _height*0.35,
                         width: _width*0.17,
-                        child:FileInfoCard(info: apiController.mutedUserList.length,title: "InActive Users"),
+                        child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted User"),
 
                       )
                     ],
@@ -83,14 +83,14 @@ final _width=MediaQuery.of(context).size.width;
                             height: _height*0.30,
                             width: _width*0.40,
                             padding: EdgeInsets.all(10),
-                            child:FileInfoCard(info: apiController.userList.length,title: "Total User"),
+                            child:FileInfoCard(info: apiController.userList.length,title: "User"),
 
                           ),
                           Container(
                             height: _height*0.30,
                             width: _width*0.40,
                             padding: EdgeInsets.all(10),
-                            child:FileInfoCard(info: apiController.groupList.length,title: "Total Group"),
+                            child:FileInfoCard(info: apiController.groupList.length,title: "Group"),
 
                           ),
                         ],
@@ -101,14 +101,14 @@ final _width=MediaQuery.of(context).size.width;
                           height: _height*0.30,
                           width: _width*0.40,
                           padding: EdgeInsets.all(10),
-                          child:FileInfoCard(info: apiController.temporaryOnlineUserList.length,title: "Online Users"),
+                          child:FileInfoCard(info: apiController.temporaryOnlineUserList.length,title: "Online User"),
 
                         ),
                         Container(
                           height: _height*0.30,
                           width: _width*0.40,
                           padding: EdgeInsets.all(10),
-                          child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted Users"),
+                          child:FileInfoCard(info: apiController.mutedUserList.length,title: "Muted User"),
 
                         )
                       ],

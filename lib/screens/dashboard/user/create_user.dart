@@ -74,7 +74,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
                 children: [
                   Container(),
                   Text(
-                    'Create User',
+                    'Add User',
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -155,7 +155,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
                 style: TextStyle(
                     color:Get.isDarkMode?Colors.white: Colors.black
                 ),
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: InputDecoration(labelText: 'username'),
               ),
               TextField(
                 controller: emailController,
@@ -169,7 +169,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
                 style: TextStyle(
                     color:Get.isDarkMode?Colors.white: Colors.black
                 ),
-                decoration: InputDecoration(labelText: 'Contact Number'),
+                decoration: InputDecoration(labelText: 'Mobile Number'),
               ),
               TextField(
                 controller: addressController,
@@ -303,7 +303,7 @@ class _CreateUserModalState extends State<CreateUserModal> {
                   // You can access the entered values using controllers like userNameController.text
                   Get.back(); // Close the modal
                 },
-                child: Text('Create'),
+                child: Text('Add'),
               ),
             ],
           ),

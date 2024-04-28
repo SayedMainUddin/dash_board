@@ -210,7 +210,7 @@ setState(() {
           }
 
           print(selectedGroups.length);
-       //   selectedGroups.map((e) =>  print(e['_id']));
+          //   selectedGroups.map((e) =>  print(e['_id']));
 
         });
 
@@ -245,7 +245,7 @@ setState(() {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: Container(
-                    width: Get.width*0.10,
+                      width: Get.width*0.10,
                       child: Text(groupInfo.groupName,overflow: TextOverflow.ellipsis,)
                   ),
                 ),
@@ -270,7 +270,8 @@ setState(() {
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:           IconButton(onPressed: (){
                   showgroupDetailModal(context,group: groupInfo);
-                },icon: Icon(Icons.edit_document,color: Colors.green,),),
+                },icon: Icon(Icons.edit_document,color: Colors.green,),
+                  tooltip: "Edit group details",),
               ),
 
               // Padding(
@@ -291,19 +292,21 @@ setState(() {
                     updateGroupsAfterDelete(groupInfo.id);
                   }, () {
                     apiController.deleteGroup(context,{"GroupId":groupInfo.id,"AdminId":LocalStorage.ADMINID});
-                    print('User account deleted!');
+                    print('group deleted!');
 
 
                   });
                   // showUserDetailModal(context,user: groupInfo);
-                },icon: Icon(Icons.delete_outline,color: Colors.red,),),
+                },icon: Icon(Icons.delete_outline,color: Colors.red,),
+                  tooltip: "Remove group",),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: actionButtonPadding),
                 child:IconButton(onPressed: (){
                   showGroupChatModal(context, groupInfo.groupName,groupInfo.id,"Group");
 
-                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),),
+                },icon: Icon(Icons.messenger_outline,color: Colors.teal,),
+                  tooltip: "Send message to group",),
               ),
             ],
           ),

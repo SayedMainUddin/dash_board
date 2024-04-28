@@ -50,7 +50,7 @@ class NoticePage extends StatelessWidget {
                             width: Get.width*0.20,
                             height: 30,
                             child: SearchBar(
-                              hintText: "Search by any",
+                              hintText: "Search",
                               leading: Icon(Icons.search),
                               //onChanged: apiController.setSearchQuery,
                               onChanged: (String? value){

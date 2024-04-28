@@ -368,7 +368,7 @@ class ProfileController extends GetxController{
     // send request to upload image
     await request.send().then((response) async {
       // listen for response
-      response.stream.transform(utf8.decoder).listen((value) {
+      response.stream.transform(utf8.decoder).listen((value) async {
         final dir = Directory(pickedFile!.path);
         dir.deleteSync(recursive: true);
         String jsonStr = value;
@@ -384,6 +384,8 @@ class ProfileController extends GetxController{
         print(dataValue); // T
         userProfileImage = '${WebApi.basesUrl}'+ dataValue;
         LocalStorage.ADMINIMAGE=userProfileImage;
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setString('profilePic', LocalStorage.ADMINIMAGE);
 
       });
 

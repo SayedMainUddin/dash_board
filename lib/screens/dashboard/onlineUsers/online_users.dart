@@ -72,7 +72,7 @@ class _UserListPageState extends State<OnlineUserList> {
                 Row(
                   children: [
                     Text(
-                      "Users List",
+                      "Users",
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     IconButton(onPressed: (){
@@ -84,7 +84,7 @@ class _UserListPageState extends State<OnlineUserList> {
                   width: 200,
                   height: 30,
                   child: SearchBar(
-                    hintText: "Search by any",
+                    hintText: "Search",
                     leading: Icon(Icons.search),
                     //onChanged: apiController.setSearchQuery,
                     onChanged: (String? value){

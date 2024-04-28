@@ -124,20 +124,25 @@ class ApiController extends GetxController {
   }
   ///get all departments
   Future<List<Department>> getAllDepartments() async {
-    final response = await http.get(Uri.parse('${WebApi.basesUrl}/api/departments'));
+    try{
+      final response = await http.get(Uri.parse('${WebApi.basesUrl}/api/departments'));
 
-    if (response.statusCode == 200) {
-      // If the server returns a 200 OK response, parse the JSON
-      final List<dynamic> data = json.decode(response.body);
-      List<Department> departments = data.map((json) => Department.fromJson(json)).toList();
-      departmentList.value=departments;
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response, parse the JSON
+        final List<dynamic> data = json.decode(response.body);
+        List<Department> departments = data.map((json) => Department.fromJson(json)).toList();
+        departmentList.value=departments;
 
-      return departments;
-    } else {
-      // If the server did not return a 200 OK response,
-      // throw an exception.
-      throw Exception('Failed to load departments');
+        return departments;
+      } else {
+        // If the server did not return a 200 OK response,
+        // throw an exception.
+        throw Exception('Failed to load departments');
+      }
+    }catch(err){
+      throw err;
     }
+
 
   }
   ///delete department
